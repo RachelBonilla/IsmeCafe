@@ -1,0 +1,309 @@
+﻿@page
+@model Web.Pages.Admin.Reservas.GestionReservasModel
+
+@{
+    ViewData["Title"] = "Reservas";
+    Layout = "_AdminLayout";
+}
+
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">
+            Gestión de reservas
+        </p>
+
+        <h1 class="text-headline-lg font-headline-lg text-coffee-bean">
+            Reservas
+        </h1>
+
+        <p class="text-body-sm text-on-surface-variant mt-1">
+            Consulta y administra las reservaciones realizadas por los clientes.
+        </p>
+    </div>
+
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl px-5 py-3 text-center">
+        <p class="text-headline-sm font-headline-sm text-coffee-bean">
+            @Model.Reservas.Count()
+        </p>
+
+        <p class="text-body-sm text-on-surface-variant">
+            Totales
+        </p>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-6 rounded-lg border px-4 py-3 text-body-sm @(Model.EsExito
+                ? "border-status-success bg-status-success/10 text-status-success"
+                : "border-status-error bg-status-error/10 text-status-error")">
+
+        @Model.Mensaje
+    </div>
+}
+
+@if (!Model.Reservas.Any())
+{
+    <div class="text-center py-16 text-on-surface-variant">
+
+        <span class="material-symbols-outlined"
+              style="font-size:48px">
+            event_busy
+        </span>
+
+        <p class="mt-2 text-body-md">
+            No hay reservas registradas.
+        </p>
+
+    </div>
+}
+else
+{
+    <div class="overflow-x-auto rounded-xl border border-outline-variant">
+
+        <table class="w-full text-body-sm">
+
+            <thead class="bg-surface-container text-on-surface-variant font-label-bold text-label-bold">
+                <tr>
+                    <th class="text-left px-4 py-3">Cliente</th>
+                    <th class="text-left px-4 py-3">Servicio</th>
+                    <th class="text-left px-4 py-3">Correo</th>
+                    <th class="text-left px-4 py-3">Teléfono</th>
+                    <th class="text-left px-4 py-3">Fecha</th>
+                    <th class="text-left px-4 py-3">Hora</th>
+                    <th class="text-left px-4 py-3">Personas</th>
+                    <th class="text-right px-4 py-3">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-outline-variant">
+
+                @foreach (var reserva in Model.Reservas)
+                {
+                    <tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+
+                        <td class="px-4 py-3 font-medium text-coffee-bean">
+                            @reserva.NombreCliente
+                        </td>
+
+                        <td class="px-4 py-3 text-on-surface-variant">
+                            @reserva.Servicio
+                        </td>
+
+                        <td class="px-4 py-3 text-on-surface-variant">
+                            @reserva.Correo
+                        </td>
+
+                        <td class="px-4 py-3 text-on-surface-variant">
+                            @reserva.Telefono
+                        </td>
+
+                        <td class="px-4 py-3 text-on-surface-variant">
+                            @reserva.FechaReserva.ToString("dd/MM/yyyy")
+                        </td>
+
+                        <td class="px-4 py-3 text-on-surface-variant">
+                            @DateTime.Today.Add(reserva.HoraReserva).ToString("hh:mm tt")
+                        </td>
+
+                        <td class="px-4 py-3">
+                            <span class="bg-secondary-container text-on-secondary-container px-2 py-1 rounded-full text-xs font-bold">
+                                @reserva.CantidadPersonas
+                            </span>
+                        </td>
+
+                        <td class="px-4 py-3 text-right">
+
+                            <button type="button"
+                                    onclick="abrirModal('modalEditarReserva-@reserva.Id')"
+                                    class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-earth-cream transition-colors"
+                                    title="Editar">
+
+                                <span class="material-symbols-outlined">
+                                    edit
+                                </span>
+
+                            </button>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    @foreach (var reserva in Model.Reservas)
+    {
+        <div id="modalEditarReserva-@reserva.Id"
+             class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+
+            <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-2xl">
+
+                <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant">
+
+                    <div>
+                        <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary">
+                            Editar reserva
+                        </p>
+
+                        <h2 class="text-headline-sm font-headline-sm text-coffee-bean">
+                            @reserva.NombreCliente
+                        </h2>
+                    </div>
+
+                    <button type="button"
+                            onclick="cerrarModal('modalEditarReserva-@reserva.Id')"
+                            class="text-on-surface-variant hover:text-primary transition-colors">
+
+                        <span class="material-symbols-outlined">
+                            close
+                        </span>
+
+                    </button>
+
+                </div>
+
+                <form method="post"
+                      asp-page-handler="Editar"
+                      class="px-6 py-6 space-y-5">
+
+                    <input type="hidden"
+                           name="id"
+                           value="@reserva.Id" />
+
+                    <input type="hidden"
+                           name="IdServicio"
+                           value="@reserva.IdServicio" />
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div>
+                            <label class="block mb-2 font-semibold">
+                                Nombre
+                            </label>
+
+                            <input type="text"
+                                   name="NombreCliente"
+                                   value="@reserva.NombreCliente"
+                                   required
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">
+                                Correo
+                            </label>
+
+                            <input type="email"
+                                   name="Correo"
+                                   value="@reserva.Correo"
+                                   required
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+                        </div>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div>
+                            <label class="block mb-2 font-semibold">
+                                Teléfono
+                            </label>
+
+                            <input type="tel"
+                                   name="Telefono"
+                                   value="@reserva.Telefono"
+                                   required
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">
+                                Cantidad de personas
+                            </label>
+
+                            <input type="number"
+                                   name="CantidadPersonas"
+                                   value="@reserva.CantidadPersonas"
+                                   min="1"
+                                   required
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+                        </div>
+
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                        <div>
+                            <label class="block mb-2 font-semibold">
+                                Fecha
+                            </label>
+
+                            <input type="date"
+                                   name="FechaReserva"
+                                   value="@reserva.FechaReserva.ToString("yyyy-MM-dd")"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                   required
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 font-semibold">
+                                Hora
+                            </label>
+
+                            <input type="time"
+                                   name="HoraReserva"
+                                   value="@reserva.HoraReserva.ToString(@"hh\:mm")"
+                                   min="07:00"
+                                   max="18:00"
+                                   required
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-3" />
+                        </div>
+
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-outline-variant">
+
+                        <button type="button"
+                                onclick="cerrarModal('modalEditarReserva-@reserva.Id')"
+                                class="px-5 py-2.5 rounded-full text-on-surface-variant hover:bg-surface-container transition-colors">
+                            Cancelar
+                        </button>
+
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-2.5 rounded-full hover:bg-primary/90 transition-colors">
+
+                            <span class="material-symbols-outlined">
+                                save
+                            </span>
+
+                            Guardar cambios
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+    }
+}
+
+@section Scripts {
+
+    <script>
+        function abrirModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function cerrarModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+    </script>
+}

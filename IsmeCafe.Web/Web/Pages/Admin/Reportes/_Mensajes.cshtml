@@ -1,0 +1,14 @@
+@model Web.Pages.Admin.Reportes.IndexModel
+
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="mb-6 rounded-lg border border-status-error bg-status-error/10 text-status-error px-4 py-3 text-body-sm">
+        @Model.Error
+    </div>
+}
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-6 rounded-lg border border-outline-variant bg-surface-container-low text-on-surface-variant px-4 py-3 text-body-sm">
+        @Model.Mensaje
+    </div>
+}

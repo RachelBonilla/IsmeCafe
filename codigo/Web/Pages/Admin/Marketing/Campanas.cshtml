@@ -1,0 +1,17 @@
+﻿@page
+@model Web.Pages.Admin.Marketing.CampanasModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Campañas";
+    Layout = "_AdminLayout";
+    var jsonOpts = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    var props = JsonSerializer.Serialize(new
+    {
+        campanas = Model.Campanas,
+        descuentos = Model.Descuentos,
+        ofertas = Model.Ofertas,
+        apiUrl = Model.ApiUrl
+    }, jsonOpts);
+}
+
+<div data-react="adminCampanas" data-props="@props"></div>

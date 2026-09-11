@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Poné en false si querés compilar sin ejecutar el build de React. -->
+    <BuildReactApp Condition="'$(BuildReactApp)' == ''">true</BuildReactApp>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Abstracciones\Abstracciones.csproj" />
+    <ProjectReference Include="..\Reglas\Reglas.csproj" />
+    <ProjectReference Include="..\Servicios\Servicios.csproj" />
+  </ItemGroup>
+
+  <!-- El código fuente de React no forma parte de la compilación de C#. -->
+  <ItemGroup>
+    <Content Remove="react\**" />
+    <None Remove="react\node_modules\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="react\package.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\Historia\" />
+    <Folder Include="Pages\Contacto\" />
+  </ItemGroup>
+
+  <Target Name="BuildReact" BeforeTargets="Build" Condition="'$(BuildReactApp)' == 'true'">
+    <Message Importance="high" Text="Compilando componentes React (react)…" />
+    <Exec Command="npm install" WorkingDirectory="react" Condition="!Exists('react\node_modules\.bin\vite') And !Exists('react\node_modules\.bin\vite.cmd')" />
+    <Exec Command="npm run build" WorkingDirectory="react" />
+  </Target>
+
+</Project>

@@ -1,0 +1,142 @@
+﻿@page
+@model Web.Pages.Contacto.IndexModel
+@{
+    ViewData["Title"] = "Contacto";
+    var heroImagen = "https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=1170&auto=format&fit=crop";
+}
+
+<!-- Hero: Contacto -->
+<section class="relative overflow-hidden rounded-lg shadow-sm bg-coffee-bean min-h-[320px] md:min-h-[380px] flex items-center justify-center text-center mb-12"
+         style="background-image: linear-gradient(180deg, rgba(43,26,18,0.55) 0%, rgba(43,26,18,0.35) 45%, rgba(43,26,18,0.65) 100%), url('@heroImagen'); background-size: cover; background-position: center;">
+    <div class="px-6 md:px-12 py-14 max-w-3xl">
+        <h1 class="text-display-hero font-display-hero text-earth-cream leading-none mb-4">
+            Hablemos de café
+        </h1>
+        <p class="text-body-lg text-earth-cream/85 max-w-2xl mx-auto">
+            ¿Tiene preguntas, sugerencias o desea reservar una experiencia?
+            Escríbanos y con gusto le respondemos.
+        </p>
+    </div>
+</section>
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-gutter">
+
+    <!-- Información de contacto -->
+    <aside class="lg:col-span-2 flex flex-col gap-6">
+        <div>
+            <h2 class="text-headline-md font-headline-md text-coffee-bean mb-2">Visítenos</h2>
+            <p class="text-on-surface-variant">
+                Nacido en el corazón de la Zona de Los Santos, Isme Café abre sus puertas
+                para compartir el sabor de nuestras montañas.
+            </p>
+        </div>
+
+        <ul class="flex flex-col gap-5">
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined filled text-primary">location_on</span>
+                <div>
+                    <p class="text-label-bold font-label-bold text-coffee-bean">Dirección</p>
+                    <p class="text-on-surface-variant">Los Santos, Tarrazú, San José, Costa Rica</p>
+                </div>
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined filled text-primary">call</span>
+                <div>
+                    <p class="text-label-bold font-label-bold text-coffee-bean">Teléfono</p>
+                    <a href="tel:+50625460000" class="text-on-surface-variant hover:text-gold-accent transition-colors">+506 2546 0000</a>
+                </div>
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined filled text-primary">mail</span>
+                <div>
+                    <p class="text-label-bold font-label-bold text-coffee-bean">Correo</p>
+                    <a href="mailto:hola@ismecafe.com" class="text-on-surface-variant hover:text-gold-accent transition-colors">hola@ismecafe.com</a>
+                </div>
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined filled text-primary">schedule</span>
+                <div>
+                    <p class="text-label-bold font-label-bold text-coffee-bean">Horario</p>
+                    <p class="text-on-surface-variant">Lunes a sábado, 7:00 a.m. – 6:00 p.m.</p>
+                </div>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Formulario -->
+    <div class="lg:col-span-3">
+        <div class="bg-white border rounded-2xl p-8 shadow-sm">
+            <h2 class="text-headline-md font-headline-md text-coffee-bean mb-6">Envíenos un mensaje</h2>
+
+            @if (Model.EnviadoConExito)
+            {
+                <div class="flex items-center gap-2 text-green-700 bg-green-50 border border-green-200 p-3 rounded-md mb-6">
+                    <span class="material-symbols-outlined filled">check_circle</span>
+                    <span class="text-sm font-semibold">¡Gracias! Su mensaje fue enviado. Le responderemos pronto.</span>
+                </div>
+            }
+
+            <form method="post" class="space-y-6">
+
+                <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm font-semibold text-center bg-red-50 p-2 rounded-md empty:hidden"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="Input.Nombre" class="block text-sm font-medium text-coffee-bean mb-2"></label>
+                        <input asp-for="Input.Nombre" required
+                               placeholder="Su nombre"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                        <span asp-validation-for="Input.Nombre" class="text-red-500 text-xs mt-1"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Input.Correo" class="block text-sm font-medium text-coffee-bean mb-2"></label>
+                        <input asp-for="Input.Correo" type="email" required
+                               placeholder="ejemplo@correo.com"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                        <span asp-validation-for="Input.Correo" class="text-red-500 text-xs mt-1"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="Input.Telefono" class="block text-sm font-medium text-coffee-bean mb-2"></label>
+                        <input asp-for="Input.Telefono" type="tel"
+                               placeholder="+506 0000 0000"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                        <span asp-validation-for="Input.Telefono" class="text-red-500 text-xs mt-1"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Input.Asunto" class="block text-sm font-medium text-coffee-bean mb-2"></label>
+                        <input asp-for="Input.Asunto" required
+                               placeholder="Motivo de su mensaje"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                        <span asp-validation-for="Input.Asunto" class="text-red-500 text-xs mt-1"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label asp-for="Input.Mensaje" class="block text-sm font-medium text-coffee-bean mb-2"></label>
+                    <textarea asp-for="Input.Mensaje" required rows="5"
+                              placeholder="Cuéntenos en qué podemos ayudarle…"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:border-primary resize-y"></textarea>
+                    <span asp-validation-for="Input.Mensaje" class="text-red-500 text-xs mt-1"></span>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 bg-primary text-on-primary font-semibold px-6 py-3 rounded-full hover:bg-primary/90 transition-all shadow-sm">
+                        <span class="material-symbols-outlined">send</span>
+                        Enviar mensaje
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

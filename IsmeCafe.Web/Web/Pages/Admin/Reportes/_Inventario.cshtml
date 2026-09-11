@@ -1,0 +1,96 @@
+@model Web.Pages.Admin.Reportes.IndexModel
+@{
+    var inputClass = "w-full bg-earth-cream/30 border border-outline-variant rounded-lg px-4 py-2 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+    var selectClass = "w-full appearance-none bg-surface-container border border-outline-variant rounded-lg px-4 py-2 pr-10 text-body-md focus:outline-none focus:border-primary cursor-pointer";
+}
+
+<form method="get" class="reportes-filtros">
+    <input type="hidden" name="reporte" value="inventario" />
+
+    <div class="reportes-filtros__campo">
+        <label for="idCategoria" class="reportes-label">Categoría</label>
+        <div class="relative">
+            <select id="idCategoria" name="idCategoria" class="@selectClass" asp-items="Model.Categorias">
+                <option value="">Todas las categorías</option>
+            </select>
+            <span class="material-symbols-outlined reportes-select__icono">expand_more</span>
+        </div>
+    </div>
+
+    <div class="reportes-filtros__campo">
+        <label for="reportes-buscar" class="reportes-label">Buscar</label>
+        <input id="reportes-buscar" type="search" placeholder="Nombre del producto…"
+               class="@inputClass" data-reportes-buscar data-reportes-tabla="tabla-inventario" autocomplete="off" />
+    </div>
+
+    <div class="reportes-filtros__acciones">
+        <button type="submit" class="reportes-boton reportes-boton--primario">
+            <span class="material-symbols-outlined">filter_alt</span>
+            Aplicar filtro
+        </button>
+        <a asp-page="/Admin/Reportes/Index" asp-route-reporte="inventario" class="reportes-boton">Limpiar</a>
+    </div>
+</form>
+
+<div class="reportes-resumen">
+    <div class="reportes-tarjeta">
+        <div class="reportes-tarjeta__valor">@Model.TotalProductos</div>
+        <div class="reportes-tarjeta__etiqueta">Productos</div>
+    </div>
+    <div class="reportes-tarjeta">
+        <div class="reportes-tarjeta__valor text-status-warning">@Model.TotalStockBajo</div>
+        <div class="reportes-tarjeta__etiqueta">Existencias bajas</div>
+    </div>
+    <div class="reportes-tarjeta">
+        <div class="reportes-tarjeta__valor text-status-error">@Model.TotalAgotados</div>
+        <div class="reportes-tarjeta__etiqueta">Agotados</div>
+    </div>
+</div>
+
+@if (Model.Inventario.Count > 0)
+{
+    <div class="reportes-tabla__contenedor">
+        <table class="reportes-tabla" id="tabla-inventario">
+            <thead>
+                <tr>
+                    <th data-reportes-orden="texto">Producto</th>
+                    <th data-reportes-orden="texto">Categoría</th>
+                    <th data-reportes-orden="numero" class="text-right">Stock actual</th>
+                    <th data-reportes-orden="numero" class="text-right">Mínimo</th>
+                    <th data-reportes-orden="texto">Existencias</th>
+                    <th data-reportes-orden="numero" class="text-right">Precio</th>
+                    <th data-reportes-orden="texto">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var linea in Model.Inventario)
+                {
+                    <tr class="@(linea.StockBajo ? "reportes-fila--alerta" : "")">
+                        <td class="font-label-bold">
+                            @if (linea.StockBajo)
+                            {
+                                <span class="material-symbols-outlined reportes-icono-alerta" title="Existencias bajas">warning</span>
+                            }
+                            @linea.Nombre
+                        </td>
+                        <td>@linea.Categoria</td>
+                        <td class="text-right" data-valor="@linea.StockActual">@linea.StockActual</td>
+                        <td class="text-right" data-valor="@linea.StockMinimo">@linea.StockMinimo</td>
+                        <td>
+                            <span class="reportes-chip reportes-chip--@linea.EstadoExistencias.ToLowerInvariant()">
+                                @linea.EstadoExistencias
+                            </span>
+                        </td>
+                        <td class="text-right" data-valor="@Model.Crudo(linea.Precio)">@Model.Colones(linea.Precio)</td>
+                        <td>
+                            <span class="reportes-chip @(linea.Activo ? "reportes-chip--activo" : "reportes-chip--inactivo")">
+                                @(linea.Activo ? "Activo" : "Inactivo")
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p class="reportes-vacio" data-reportes-sin-resultados hidden>Ningún producto coincide con la búsqueda.</p>
+    </div>
+}

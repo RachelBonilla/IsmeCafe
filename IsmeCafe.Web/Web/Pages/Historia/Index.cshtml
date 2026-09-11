@@ -1,0 +1,139 @@
+@page
+@model Web.Pages.Historia.IndexModel
+@{
+    ViewData["Title"] = "Nuestra Historia";
+    var heroImagen = "https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=1740&auto=format&fit=crop";
+}
+
+<!-- Hero -->
+<section class="relative overflow-hidden rounded-lg shadow-sm bg-coffee-bean min-h-[420px] md:min-h-[500px] flex items-center justify-center text-center mb-12"
+         style="background-image: linear-gradient(180deg, rgba(43,26,18,0.55) 0%, rgba(43,26,18,0.35) 45%, rgba(43,26,18,0.70) 100%), url('@heroImagen'); background-size: cover; background-position: center;">
+    <div class="px-6 md:px-12 py-16 max-w-3xl">
+        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gold-accent flex items-center justify-center mb-8 mx-auto">
+            <span class="material-symbols-outlined filled text-gold-accent" style="font-size: 2.25rem;">local_cafe</span>
+        </div>
+        <h1 class="text-display-hero font-display-hero text-earth-cream leading-none mb-5">
+            Nuestra Historia
+        </h1>
+        <p class="text-body-lg text-earth-cream/85 max-w-2xl mx-auto">
+            Del corazón de las montañas de Los Santos a su taza: una herencia
+            construida con amor, dedicación y sueños.
+        </p>
+    </div>
+</section>
+
+<!-- Origen -->
+<section class="py-stack-lg max-w-3xl mx-auto text-center">
+    <span class="material-symbols-outlined text-gold-accent mb-4" style="font-size: 2rem;">eco</span>
+    <h2 class="text-headline-md font-headline-md text-coffee-bean mb-6">
+        Dónde comenzó todo
+    </h2>
+    <p class="text-body-md text-on-surface-variant leading-8">
+        Isme Café nació en las fértiles tierras de la zona de Los Santos, Costa Rica,
+        donde generaciones de familias cafetaleras han dedicado su vida a perfeccionar
+        el arte del café. Lo que comenzó como una tradición familiar se convirtió en
+        un sueño: compartir con el mundo un café de especialidad que respeta la tierra
+        y honra a quienes la trabajan.
+    </p>
+</section>
+
+<!-- Línea de tiempo -->
+<section class="py-16">
+    <h2 class="text-headline-md font-headline-md text-coffee-bean text-center mb-12">
+        Nuestro Camino
+    </h2>
+
+    <div class="max-w-3xl mx-auto space-y-8">
+
+        <div class="flex gap-5 items-start">
+            <div class="shrink-0 w-14 h-14 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">agriculture</span>
+            </div>
+            <div>
+                <h3 class="text-title-lg font-bold text-coffee-bean mb-1">La cosecha a mano</h3>
+                <p class="text-body-md text-on-surface-variant leading-7">
+                    Cada cereza de café es seleccionada a mano por familias productoras,
+                    garantizando únicamente los granos en su punto óptimo de maduración.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex gap-5 items-start">
+            <div class="shrink-0 w-14 h-14 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">local_fire_department</span>
+            </div>
+            <div>
+                <h3 class="text-title-lg font-bold text-coffee-bean mb-1">El tueste artesanal</h3>
+                <p class="text-body-md text-on-surface-variant leading-7">
+                    Tostamos en pequeños lotes para resaltar el perfil único de cada
+                    origen, cuidando el aroma, el cuerpo y las notas de sabor que
+                    distinguen a nuestro café.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex gap-5 items-start">
+            <div class="shrink-0 w-14 h-14 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">volunteer_activism</span>
+            </div>
+            <div>
+                <h3 class="text-title-lg font-bold text-coffee-bean mb-1">De nuestra familia a la suya</h3>
+                <p class="text-body-md text-on-surface-variant leading-7">
+                    Hoy llevamos esa herencia a cada hogar y negocio, con atención
+                    personalizada y el compromiso de ofrecer siempre una experiencia
+                    de café inigualable.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Valores -->
+<section class="py-16">
+    <h2 class="text-headline-md font-headline-md text-coffee-bean text-center mb-10">
+        Lo que nos mueve
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+        <div class="border rounded-xl p-6 shadow-sm">
+            <span class="material-symbols-outlined text-gold-accent mb-3" style="font-size: 2rem;">forest</span>
+            <h3 class="text-xl font-semibold mb-3">Respeto por la tierra</h3>
+            <p class="text-on-surface-variant">
+                Cultivamos con prácticas que honran el medio ambiente y la
+                sostenibilidad de nuestras montañas.
+            </p>
+        </div>
+        <div class="border rounded-xl p-6 shadow-sm">
+            <span class="material-symbols-outlined text-gold-accent mb-3" style="font-size: 2rem;">diversity_3</span>
+            <h3 class="text-xl font-semibold mb-3">Tradición familiar</h3>
+            <p class="text-on-surface-variant">
+                Cada taza guarda el conocimiento de generaciones dedicadas al
+                arte del café.
+            </p>
+        </div>
+        <div class="border rounded-xl p-6 shadow-sm">
+            <span class="material-symbols-outlined text-gold-accent mb-3" style="font-size: 2rem;">workspace_premium</span>
+            <h3 class="text-xl font-semibold mb-3">Calidad de especialidad</h3>
+            <p class="text-on-surface-variant">
+                Seleccionamos y tostamos con estándares de café de especialidad
+                para un sabor excepcional.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Llamado a la acción -->
+<section class="py-16 text-center">
+    <h2 class="text-headline-md font-headline-md text-coffee-bean mb-6">
+        Sea parte de nuestra historia
+    </h2>
+    <p class="text-body-md text-on-surface-variant max-w-2xl mx-auto mb-8">
+        Descubra el sabor de las montañas de Los Santos en cada uno de nuestros cafés.
+    </p>
+    <a asp-page="/Productos/Index"
+       class="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors">
+        <span class="material-symbols-outlined filled">shopping_bag</span>
+        Explorar Productos
+    </a>
+</section>

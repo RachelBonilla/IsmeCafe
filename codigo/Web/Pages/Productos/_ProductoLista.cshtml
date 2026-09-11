@@ -1,0 +1,83 @@
+@model Web.Pages.Productos.AdminModel
+
+<section class="lg:col-span-3">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant">
+            <h2 class="text-headline-sm font-headline-sm text-coffee-bean">Listado</h2>
+            <span class="bg-surface-container text-on-surface-variant text-label-bold font-label-bold px-3 py-1 rounded-full">@Model.Productos.Count</span>
+        </div>
+
+        @if (Model.Productos.Count == 0)
+        {
+            <p class="px-5 py-10 text-center text-on-surface-variant text-body-sm">No hay productos registrados.</p>
+        }
+        else
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full text-data-table font-data-table">
+                    <thead>
+                        <tr class="text-left text-on-surface-variant bg-surface-container/50 border-b border-outline-variant">
+                            <th class="px-4 py-2.5 font-label-bold">Producto</th>
+                            <th class="px-4 py-2.5 font-label-bold">Categoría</th>
+                            <th class="px-4 py-2.5 font-label-bold text-right">Precio</th>
+                            <th class="px-4 py-2.5 font-label-bold text-center">Stock</th>
+                            <th class="px-4 py-2.5 font-label-bold text-center">Estado</th>
+                            <th class="px-4 py-2.5 font-label-bold text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Productos)
+                        {
+                            <tr class="border-b border-outline-variant/40 odd:bg-surface-container-lowest even:bg-surface-container-low/40 hover:bg-earth-cream/20">
+                                <td class="px-4 py-2.5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-10 w-10 rounded bg-surface-container overflow-hidden flex items-center justify-center shrink-0">
+                                            @if (!string.IsNullOrWhiteSpace(p.Imagen))
+                                            {
+                                                <img src="@p.Imagen" alt="@p.Nombre" class="h-full w-full object-cover" />
+                                            }
+                                            else
+                                            {
+                                                <span class="material-symbols-outlined text-outline">local_cafe</span>
+                                            }
+                                        </div>
+                                        <span class="font-label-bold text-on-surface">@p.Nombre</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-2.5 text-on-surface-variant">@p.Categoria</td>
+                                <td class="px-4 py-2.5 text-right text-on-surface">₡@p.Precio.ToString("N0")</td>
+                                <td class="px-4 py-2.5 text-center">@p.Cantidad</td>
+                                <td class="px-4 py-2.5 text-center">
+                                    @if (p.Activo)
+                                    {
+                                        <span class="bg-status-success/10 text-status-success text-label-bold font-label-bold px-2 py-1 rounded-full">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="bg-status-error/10 text-status-error text-label-bold font-label-bold px-2 py-1 rounded-full">Inactivo</span>
+                                    }
+                                </td>
+                                <td class="px-4 py-2.5">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <a asp-page="/Productos/Admin" asp-route-id="@p.Id"
+                                            class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-earth-cream transition-colors" aria-label="Editar" title="Editar">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </a>
+                                        <form method="post" asp-page-handler="Eliminar" class="inline"
+                                                onsubmit="return confirm('¿Eliminar el producto &quot;@p.Nombre&quot; del catálogo?');">
+                                            <input type="hidden" name="id" value="@p.Id" />
+                                            <button type="submit"
+                                                    class="p-2 rounded-full text-on-surface-variant hover:text-status-error hover:bg-status-error/10 transition-colors" aria-label="Eliminar" title="Eliminar">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>

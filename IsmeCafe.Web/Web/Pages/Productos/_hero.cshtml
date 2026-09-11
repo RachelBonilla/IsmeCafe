@@ -1,0 +1,23 @@
+@{
+    var heroImagen = "https://images.unsplash.com/photo-1778653202386-06d020d905df?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+}
+
+<!-- Hero: Catálogo de Café -->
+<section class="relative overflow-hidden rounded-lg shadow-sm bg-coffee-bean min-h-[360px] md:min-h-[420px] flex items-center mb-12"
+         style="background-image: linear-gradient(90deg, rgba(43,26,18,0.92) 0%, rgba(43,26,18,0.6) 45%, rgba(43,26,18,0.2) 100%), url('@heroImagen'); background-size: cover; background-position: center;">
+    <div class="w-full px-6 md:px-12 py-12">
+        <p class="text-label-bold font-label-bold uppercase tracking-wider text-gold-accent mb-3">De la finca a tu taza</p>
+        <h1 class="text-display-hero font-display-hero text-earth-cream leading-none mb-5 max-w-2xl">
+            Catálogo de Café
+        </h1>
+        <p class="text-body-lg text-earth-cream/85 max-w-lg mb-8">
+            Explora nuestra selección premium de granos y equipos, tostados y elegidos
+            con dedicación en el corazón de Los Santos.
+        </p>
+        <a asp-page="/Admin/Productos/Index"
+           class="inline-flex items-center gap-2 border border-earth-cream/60 text-earth-cream px-5 py-2.5 rounded-full text-label-bold font-label-bold hover:bg-earth-cream/10 transition-colors">
+            <span class="material-symbols-outlined filled">settings</span>
+            Administrar
+        </a>
+    </div>
+</section>

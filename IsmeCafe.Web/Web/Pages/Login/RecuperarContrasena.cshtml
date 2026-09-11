@@ -1,0 +1,142 @@
+﻿@page
+@model Web.Pages.Login.RecuperarContrasenaModel
+@{
+    ViewData["Title"] = "Recuperar Contraseña";
+}
+
+<section class="flex justify-center items-center py-16">
+    <div class="w-full max-w-md bg-white border rounded-2xl p-8 shadow-sm">
+
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-coffee-bean mb-2">
+                ISME Cafe
+            </h1>
+
+            @if (!Model.CodigoEnviado)
+            {
+                <p class="text-on-surface">
+                    Ingresa tu correo para recuperar tu contraseña
+                </p>
+            }
+            else
+            {
+                <p class="text-on-surface">
+                    Ingresa el código recibido y tu nueva contraseña
+                </p>
+            }
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+        {
+            <div class="text-green-700 text-sm font-semibold text-center bg-green-50 p-3 rounded-md mb-6">
+                @Model.Mensaje
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.Error))
+        {
+            <div class="text-red-500 text-sm font-semibold text-center bg-red-50 p-3 rounded-md mb-6">
+                @Model.Error
+            </div>
+        }
+
+        @if (!Model.CodigoEnviado)
+        {
+            <form method="post"
+                  asp-page-handler="SolicitarCodigo"
+                  class="space-y-6">
+
+                <div>
+                    <label asp-for="Formulario.Correo"
+                           class="block text-sm font-medium text-coffee-bean mb-2">
+                        Correo Electrónico
+                    </label>
+
+                    <input asp-for="Formulario.Correo"
+                           type="email"
+                           required
+                           placeholder="ejemplo@ismecafe.com"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                            class="w-full bg-primary text-white font-semibold px-6 py-3 rounded-full hover:bg-opacity-90 transition-all shadow-sm">
+                        Enviar Código
+                    </button>
+                </div>
+
+            </form>
+        }
+        else
+        {
+            <form method="post"
+                  asp-page-handler="Restablecer"
+                  class="space-y-6">
+
+                <input type="hidden" asp-for="Formulario.Correo" />
+                <input type="hidden" asp-for="CodigoEnviado" />
+
+                <div>
+                    <label asp-for="Formulario.Codigo"
+                           class="block text-sm font-medium text-coffee-bean mb-2">
+                        Código de Recuperación
+                    </label>
+
+                    <input asp-for="Formulario.Codigo"
+                           type="text"
+                           inputmode="numeric"
+                           maxlength="6"
+                           required
+                           autocomplete="one-time-code"
+                           placeholder="000000"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-full text-center tracking-widest focus:outline-none focus:border-primary" />
+                </div>
+
+                <div>
+                    <label asp-for="Formulario.NuevaContrasena"
+                           class="block text-sm font-medium text-coffee-bean mb-2">
+                        Nueva Contraseña
+                    </label>
+
+                    <input asp-for="Formulario.NuevaContrasena"
+                           type="password"
+                           required
+                           autocomplete="new-password"
+                           placeholder="••••••••"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                </div>
+
+                <div>
+                    <label asp-for="Formulario.ConfirmarContrasena"
+                           class="block text-sm font-medium text-coffee-bean mb-2">
+                        Confirmar Contraseña
+                    </label>
+
+                    <input asp-for="Formulario.ConfirmarContrasena"
+                           type="password"
+                           required
+                           autocomplete="new-password"
+                           placeholder="••••••••"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                            class="w-full bg-primary text-white font-semibold px-6 py-3 rounded-full hover:bg-opacity-90 transition-all shadow-sm">
+                        Restablecer Contraseña
+                    </button>
+                </div>
+
+            </form>
+        }
+
+        <div class="mt-6 text-center text-sm text-on-surface">
+            <a asp-page="/Login/Index"
+               class="text-primary hover:underline font-medium">
+                Volver al inicio de sesión
+            </a>
+        </div>
+
+    </div>
+</section>

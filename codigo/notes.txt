@@ -1,0 +1,9 @@
+Server name:
+sc-701-dmurillo-01.database.windows.net
+
+sqladmin
+AdminRoot123
+
+
+API
+https://ismecafe-dxazgtgjcrbpc2cu.centralus-01.azurewebsites.net/swagger

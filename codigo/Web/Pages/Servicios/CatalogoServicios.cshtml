@@ -1,0 +1,46 @@
+﻿@page
+@model Web.Pages.Servicios.Admin.GestionServiciosModel
+@{
+    ViewData["Title"] = "Catálogo de Servicios";
+}
+
+<partial name="_hero" />
+
+<h2 class="text-xl font-bold mb-4">Catálogo de Servicios</h2>
+
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <h1 class="text-headline-lg font-headline-lg text-coffee-bean">Catálogo de Café</h1>
+    <a asp-page="/Servicios/Admin/GestionServicios"
+       class="inline-flex items-center gap-2 bg-primary text-on-primary px-5 py-2.5 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors self-start sm:self-auto">
+        <span class="material-symbols-outlined filled">settings</span>
+        Administrar
+    </a>
+</div>
+
+<table class="table-auto w-full border-collapse border border-gray-300 shadow-sm">
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="border px-4 py-2 text-left">Servicio</th>
+            <th class="border px-4 py-2 text-left">Duración</th>
+            <th class="border px-4 py-2 text-left">Precio</th>
+            <th class="border px-4 py-2 text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var servicio in Model.Servicios)
+        {
+            <tr>
+                <td class="border px-4 py-2">@servicio.Nombre</td>
+                <td class="border px-4 py-2">@servicio.Duracion min</td>
+                <td class="border px-4 py-2">₡@servicio.Precio</td>
+                <td class="border px-4 py-2 text-center">
+                    <a asp-page="/Servicios/ServiciosDetalle"
+                       asp-route-id="@servicio.Id"
+                       class="text-blue-600 hover:text-blue-800">
+                        <span class="material-symbols-outlined">visibility</span>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

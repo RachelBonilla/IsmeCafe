@@ -1,0 +1,98 @@
+@model Web.Pages.Admin.Reportes.IndexModel
+@{
+    var inputClass = "w-full bg-earth-cream/30 border border-outline-variant rounded-lg px-4 py-2 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+    var selectClass = "w-full appearance-none bg-surface-container border border-outline-variant rounded-lg px-4 py-2 pr-10 text-body-md focus:outline-none focus:border-primary cursor-pointer";
+}
+
+<form method="get" class="reportes-filtros" data-reportes-form-ventas>
+    <input type="hidden" name="reporte" value="ventas" />
+
+    <div class="reportes-filtros__campo">
+        <label for="fechaInicio" class="reportes-label">Desde</label>
+        <input id="fechaInicio" name="fechaInicio" type="date" class="@inputClass"
+               value="@(Model.FechaInicio?.ToString("yyyy-MM-dd"))" data-reportes-fecha-inicio required />
+    </div>
+
+    <div class="reportes-filtros__campo">
+        <label for="fechaFin" class="reportes-label">Hasta</label>
+        <input id="fechaFin" name="fechaFin" type="date" class="@inputClass"
+               value="@(Model.FechaFin?.ToString("yyyy-MM-dd"))" data-reportes-fecha-fin required />
+    </div>
+
+    <div class="reportes-filtros__campo">
+        <label for="idEmpleado" class="reportes-label">Empleado</label>
+        <div class="relative">
+            <select id="idEmpleado" name="idEmpleado" class="@selectClass" asp-items="Model.Empleados">
+                <option value="">Todos los empleados</option>
+            </select>
+            <span class="material-symbols-outlined reportes-select__icono">expand_more</span>
+        </div>
+    </div>
+
+    <div class="reportes-filtros__acciones">
+        <button type="submit" class="reportes-boton reportes-boton--primario">
+            <span class="material-symbols-outlined">query_stats</span>
+            Generar reporte
+        </button>
+        <a asp-page="/Admin/Reportes/Index" asp-route-reporte="ventas" class="reportes-boton">Limpiar</a>
+    </div>
+
+    <p class="reportes-error-cliente" data-reportes-error-fechas hidden>
+        La fecha de inicio no puede ser posterior a la fecha de fin.
+    </p>
+</form>
+
+@if (Model.VentasGeneradas && Model.Ventas.Count > 0)
+{
+    <div class="reportes-resumen">
+        <div class="reportes-tarjeta">
+            <div class="reportes-tarjeta__valor">@Model.Ventas.Count</div>
+            <div class="reportes-tarjeta__etiqueta">Empleados con ventas</div>
+        </div>
+        <div class="reportes-tarjeta">
+            <div class="reportes-tarjeta__valor">@Model.TotalOrdenes</div>
+            <div class="reportes-tarjeta__etiqueta">Órdenes</div>
+        </div>
+        <div class="reportes-tarjeta">
+            <div class="reportes-tarjeta__valor text-status-success">@Model.Colones(Model.MontoVendido)</div>
+            <div class="reportes-tarjeta__etiqueta">Monto acumulado</div>
+        </div>
+    </div>
+
+    <div class="reportes-tabla__contenedor">
+        <table class="reportes-tabla" id="tabla-ventas">
+            <thead>
+                <tr>
+                    <th data-reportes-orden="texto">Empleado</th>
+                    <th data-reportes-orden="texto">Correo</th>
+                    <th data-reportes-orden="numero" class="text-right">Órdenes</th>
+                    <th data-reportes-orden="numero" class="text-right">Unidades</th>
+                    <th data-reportes-orden="numero" class="text-right">Ticket promedio</th>
+                    <th data-reportes-orden="numero" class="text-right">Monto acumulado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var venta in Model.Ventas)
+                {
+                    <tr class="@(venta.IdEmpleado == null ? "reportes-fila--sin-asignar" : "")">
+                        <td class="font-label-bold">@venta.Empleado</td>
+                        <td>@(string.IsNullOrEmpty(venta.Correo) ? "—" : venta.Correo)</td>
+                        <td class="text-right" data-valor="@venta.CantidadOrdenes">@venta.CantidadOrdenes</td>
+                        <td class="text-right" data-valor="@venta.UnidadesVendidas">@venta.UnidadesVendidas</td>
+                        <td class="text-right" data-valor="@Model.Crudo(venta.TicketPromedio)">@Model.Colones(venta.TicketPromedio)</td>
+                        <td class="text-right font-label-bold" data-valor="@Model.Crudo(venta.MontoTotal)">@Model.Colones(venta.MontoTotal)</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="font-label-bold">Total del periodo</td>
+                    <td class="text-right font-label-bold">@Model.TotalOrdenes</td>
+                    <td class="text-right font-label-bold">@Model.TotalUnidades</td>
+                    <td></td>
+                    <td class="text-right font-label-bold">@Model.Colones(Model.MontoVendido)</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+}

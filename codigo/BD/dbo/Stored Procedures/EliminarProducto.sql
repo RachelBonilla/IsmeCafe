@@ -1,0 +1,16 @@
+CREATE   PROCEDURE EliminarProducto
+	@Id UNIQUEIDENTIFIER
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	BEGIN TRANSACTION
+
+	UPDATE [dbo].[Productos]
+	SET [Activo] = 0,
+		[FechaActualizacion] = GETDATE()
+	WHERE (Id = @Id)
+
+	SELECT @Id
+	COMMIT TRANSACTION
+END

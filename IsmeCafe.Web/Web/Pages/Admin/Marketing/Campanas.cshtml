@@ -1,0 +1,172 @@
+﻿@page
+@model Web.Pages.Admin.Marketing.CampanasModel
+@{
+    ViewData["Title"] = "Campañas";
+    Layout = "_AdminLayout";
+}
+
+<div class="mb-6">
+    <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">Marketing</p>
+    <h1 class="text-headline-lg font-headline-lg text-coffee-bean">Campañas de marketing</h1>
+    <p class="text-body-sm text-on-surface-variant mt-1">Enviá correos de ofertas o descuentos a los clientes suscritos</p>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-6 rounded-lg border px-4 py-3 text-body-sm @(Model.EsExito
+                 ? "border-status-success bg-status-success/10 text-status-success"
+                 : "border-status-error bg-status-error/10 text-status-error")">
+        @Model.Mensaje
+    </div>
+}
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6">
+        <h2 class="text-headline-sm font-headline-sm text-coffee-bean mb-4">Nueva campaña</h2>
+
+        <div class="flex gap-2 mb-6 p-1 bg-surface-container rounded-full w-fit">
+            <button type="button" onclick="mostrarPestanaCampana('Oferta')" id="tabBtnOferta"
+                    class="px-4 py-1.5 rounded-full text-label-bold font-label-bold transition-colors @(Model.PestanaActiva == "Oferta" ? "bg-primary text-on-primary" : "text-on-surface-variant hover:text-on-surface")">
+                Oferta
+            </button>
+            <button type="button" onclick="mostrarPestanaCampana('Descuento')" id="tabBtnDescuento"
+                    class="px-4 py-1.5 rounded-full text-label-bold font-label-bold transition-colors @(Model.PestanaActiva == "Descuento" ? "bg-primary text-on-primary" : "text-on-surface-variant hover:text-on-surface")">
+                Descuento
+            </button>
+        </div>
+
+        <!--Formulario de envio de oferta-->
+        <div id="tabPanelOferta" class="@(Model.PestanaActiva == "Oferta" ? "" : "hidden")">
+            <form method="post" asp-page-handler="EnviarOferta" class="flex flex-col gap-4">
+                <div asp-validation-summary="ModelOnly" class="text-status-error text-body-sm"></div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Oferta vigente</label>
+                    <select name="CampanaOferta.IdOferta" class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary">
+                        <option value="">— Seleccioná una oferta —</option>
+                        @foreach (var o in Model.OfertasVigentes)
+                        {
+                            <option value="@o.Id">@o.Nombre (@o.TipoOferta)</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CampanaOferta.IdOferta" class="text-status-error text-body-sm"></span>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Asunto del correo</label>
+                    <input name="CampanaOferta.Asunto" placeholder="¡Nueva oferta en Isme Café!"
+                           class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary" />
+                    <span asp-validation-for="CampanaOferta.Asunto" class="text-status-error text-body-sm"></span>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Mensaje adicional (opcional)</label>
+                    <textarea name="CampanaOferta.Contenido" rows="3" placeholder="Texto introductorio del correo..."
+                              class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary resize-none"></textarea>
+                </div>
+
+                <button type="submit"
+                        class="flex items-center justify-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full font-label-bold text-label-bold hover:bg-primary/90 transition-colors mt-2">
+                    <span class="material-symbols-outlined" style="font-size:18px">send</span>
+                    Enviar campaña
+                </button>
+            </form>
+        </div>
+
+        <!--Formulario de campaña de descuento-->
+        <div id="tabPanelDescuento" class="@(Model.PestanaActiva == "Descuento" ? "" : "hidden")">
+            <form method="post" asp-page-handler="EnviarDescuento" class="flex flex-col gap-4">
+                <div asp-validation-summary="ModelOnly" class="text-status-error text-body-sm"></div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Descuento vigente</label>
+                    <select name="CampanaDescuento.IdDescuento" class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary">
+                        <option value="">— Seleccioná un descuento —</option>
+                        @foreach (var d in Model.DescuentosVigentes)
+                        {
+                            <option value="@d.Id">@d.NombreProducto — @d.PorcentajeDescuento% off</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CampanaDescuento.IdDescuento" class="text-status-error text-body-sm"></span>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Asunto del correo</label>
+                    <input name="CampanaDescuento.Asunto" placeholder="¡Descuento especial en Isme Café!"
+                           class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary" />
+                    <span asp-validation-for="CampanaDescuento.Asunto" class="text-status-error text-body-sm"></span>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Mensaje adicional (opcional)</label>
+                    <textarea name="CampanaDescuento.Contenido" rows="3" placeholder="Texto introductorio del correo..."
+                              class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary resize-none"></textarea>
+                </div>
+
+                <button type="submit"
+                        class="flex items-center justify-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full font-label-bold text-label-bold hover:bg-primary/90 transition-colors mt-2">
+                    <span class="material-symbols-outlined" style="font-size:18px">send</span>
+                    Enviar campaña
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!--Historial de campañas enviadas-->
+    <div>
+        <h2 class="text-headline-sm font-headline-sm text-coffee-bean mb-4">Historial de envíos</h2>
+
+        @if (Model.Campanas.Count == 0)
+        {
+            <div class="text-center py-12 text-on-surface-variant border border-outline-variant rounded-2xl">
+                <span class="material-symbols-outlined" style="font-size:48px">mail</span>
+                <p class="mt-2 text-body-md">No hay campañas enviadas.</p>
+            </div>
+        }
+        else
+        {
+            <div class="flex flex-col gap-3">
+                @foreach (var c in Model.Campanas)
+                {
+                    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 rounded-full text-xs font-bold @(c.Tipo == "Oferta" ? "bg-primary-container text-on-primary" : "bg-secondary-container text-on-secondary-container")">
+                                @c.Tipo
+                            </span>
+                            @if (c.Exitosa)
+                            {
+                                <span class="bg-status-success/20 text-status-success px-2 py-0.5 rounded-full text-xs font-bold">Enviada</span>
+                            }
+                            else
+                            {
+                                <span class="bg-error-container text-error px-2 py-0.5 rounded-full text-xs font-bold">Fallida</span>
+                            }
+                        </div>
+                        <p class="font-medium text-on-surface text-body-md">@c.Asunto</p>
+                        <p class="text-body-sm text-on-surface-variant mt-1">
+                            @(c.FechaEnvio?.ToString("g") ?? "—") · @c.CantidadDestinatarios destinatario(s)
+                        </p>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function mostrarPestanaCampana(tipo) {
+            var esOferta = tipo === 'Oferta';
+            document.getElementById('tabPanelOferta').classList.toggle('hidden', !esOferta);
+            document.getElementById('tabPanelDescuento').classList.toggle('hidden', esOferta);
+
+            document.getElementById('tabBtnOferta').className =
+                'px-4 py-1.5 rounded-full text-label-bold font-label-bold transition-colors '
+                + (esOferta ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:text-on-surface');
+            document.getElementById('tabBtnDescuento').className =
+                'px-4 py-1.5 rounded-full text-label-bold font-label-bold transition-colors '
+                + (!esOferta ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:text-on-surface');
+        }
+    </script>
+}

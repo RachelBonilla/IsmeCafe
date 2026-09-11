@@ -1,0 +1,193 @@
+@page "{id:guid?}"
+@using System.Linq
+@model Web.Pages.Servicios.Admin.GestionServiciosModel
+@{
+    ViewData["Title"] = "Administrar Servicios";
+    Layout = "_AdminLayout";
+    var inputClass = "w-full bg-earth-cream/30 border border-outline-variant rounded-lg px-4 py-2 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+}
+
+<!-- Encabezado del panel -->
+<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+    <div>
+        <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">Gestión de servicios</p>
+        <h1 class="text-headline-lg font-headline-lg text-coffee-bean">Servicios</h1>
+    </div>
+    <div class="flex items-center gap-3 text-body-sm">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 text-center">
+            <div class="text-headline-sm font-headline-sm text-coffee-bean leading-none">@(Model.Servicios?.Count() ?? 0)</div>
+            <div class="text-on-surface-variant">Totales</div>
+        </div>
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 text-center">
+            <div class="text-headline-sm font-headline-sm text-status-success leading-none">@(Model.Servicios?.Count(s => s.Activo) ?? 0)</div>
+            <div class="text-on-surface-variant">Activos</div>
+        </div>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-6 rounded-lg border px-4 py-3 text-body-sm @(Model.EsExito
+        ? "border-status-success bg-status-success/10 text-status-success"
+        : "border-status-error bg-status-error/10 text-status-error")">
+        @Model.Mensaje
+    </div>
+}
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Panel lateral: Formulario (Agregar / Editar servicio) -->
+    <aside class="lg:col-span-1">
+        <form method="post" asp-page-handler="Guardar"
+              class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-6 space-y-5 lg:sticky lg:top-6">
+            <div class="flex items-center gap-2 pb-3 border-b border-outline-variant">
+                <span class="material-symbols-outlined filled text-secondary">@(Model.EnEdicion ? "edit" : "add_circle")</span>
+                <h2 class="text-headline-sm font-headline-sm text-coffee-bean">
+                    @(Model.EnEdicion ? "Editar servicio" : "Nuevo servicio")
+                </h2>
+            </div>
+
+            <input type="hidden" asp-for="EditId" />
+            <div asp-validation-summary="ModelOnly" class="text-status-error text-body-sm"></div>
+
+            <div>
+                <label asp-for="Entrada.Nombre" class="block text-body-sm font-label-bold text-on-surface mb-1">Nombre</label>
+                <input asp-for="Entrada.Nombre" placeholder="Cata de café tradicional" class="@inputClass" />
+                <span asp-validation-for="Entrada.Nombre" class="text-status-error text-body-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Entrada.Descripcion" class="block text-body-sm font-label-bold text-on-surface mb-1">Descripción</label>
+                <textarea asp-for="Entrada.Descripcion" rows="3" placeholder="Experiencia guiada de cata de café…" class="@inputClass"></textarea>
+                <span asp-validation-for="Entrada.Descripcion" class="text-status-error text-body-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Entrada.IdGrupo" class="block text-body-sm font-label-bold text-on-surface mb-1">Grupo</label>
+                <div class="relative">
+                    <select asp-for="Entrada.IdGrupo" asp-items="Model.ServiciosDisponibles"
+                            class="w-full appearance-none bg-surface-container border border-outline-variant rounded-lg px-4 py-2 pr-10 text-body-md focus:outline-none focus:border-primary cursor-pointer">
+                        <option value="">Seleccione un grupo…</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant">expand_more</span>
+                </div>
+                <span asp-validation-for="Entrada.IdGrupo" class="text-status-error text-body-sm"></span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="Entrada.Duracion" class="block text-body-sm font-label-bold text-on-surface mb-1">Duración (min)</label>
+                    <input asp-for="Entrada.Duracion" type="number" min="1" placeholder="60" class="@inputClass" />
+                    <span asp-validation-for="Entrada.Duracion" class="text-status-error text-body-sm"></span>
+                </div>
+                <div>
+                    <label asp-for="Entrada.CupoMaximo" class="block text-body-sm font-label-bold text-on-surface mb-1">Cupo máximo</label>
+                    <input asp-for="Entrada.CupoMaximo" type="number" min="1" placeholder="20" class="@inputClass" />
+                    <span asp-validation-for="Entrada.CupoMaximo" class="text-status-error text-body-sm"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Entrada.Precio" class="block text-body-sm font-label-bold text-on-surface mb-1">Precio (₡)</label>
+                <input asp-for="Entrada.Precio" type="number" step="0.01" min="0.01" placeholder="15000" class="@inputClass" />
+                <span asp-validation-for="Entrada.Precio" class="text-status-error text-body-sm"></span>
+            </div>
+
+            <label class="flex items-center gap-2 text-body-md text-on-surface">
+                <input asp-for="Entrada.Activo" type="checkbox" class="h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary" />
+                Visible en el catálogo (activo)
+            </label>
+
+            <div class="flex items-center gap-3 pt-2">
+                <button type="submit"
+                        class="bg-primary text-on-primary px-5 py-2.5 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors flex items-center gap-2">
+                    <span class="material-symbols-outlined filled">save</span>
+                    @(Model.EnEdicion ? "Guardar cambios" : "Registrar servicio")
+                </button>
+                @if (Model.EnEdicion)
+                {
+                    <a asp-page="/Servicios/Admin/GestionServicios"
+                       class="text-on-surface-variant hover:text-primary transition-colors text-label-bold font-label-bold">Cancelar</a>
+                }
+            </div>
+        </form>
+    </aside>
+
+    <!-- Listado de servicios -->
+    <section class="lg:col-span-3">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant">
+                <h2 class="text-headline-sm font-headline-sm text-coffee-bean">Gestión de Servicios</h2>
+                <span class="bg-surface-container text-on-surface-variant text-label-bold font-label-bold px-3 py-1 rounded-full">
+                    @(Model.Servicios?.Count() ?? 0)
+                </span>
+            </div>
+
+            @if (Model.Servicios == null || !Model.Servicios.Any())
+            {
+                <p class="px-5 py-10 text-center text-on-surface-variant text-body-sm">
+                    No hay servicios registrados.
+                </p>
+            }
+            else
+            {
+                <div class="overflow-x-auto">
+                    <table class="w-full text-data-table font-data-table">
+                        <thead>
+                            <tr class="text-left text-on-surface-variant bg-surface-container/50 border-b border-outline-variant">
+                                <th class="px-4 py-2.5 font-label-bold">Servicio</th>
+                                <th class="px-4 py-2.5 font-label-bold">Duración</th>
+                                <th class="px-4 py-2.5 font-label-bold text-right">Precio</th>
+                                <th class="px-4 py-2.5 font-label-bold text-center">Cupo</th>
+                                <th class="px-4 py-2.5 font-label-bold text-center">Estado</th>
+                                <th class="px-4 py-2.5 font-label-bold text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in Model.Servicios)
+                            {
+                                <tr class="border-b border-outline-variant/40 odd:bg-surface-container-lowest even:bg-surface-container-low/40 hover:bg-earth-cream/20">
+                                    <td class="px-4 py-2.5 font-label-bold text-on-surface">@s.Nombre</td>
+                                    <td class="px-4 py-2.5 text-on-surface-variant">@s.Duracion min</td>
+                                    <td class="px-4 py-2.5 text-right text-on-surface">₡@s.Precio.ToString("N0")</td>
+                                    <td class="px-4 py-2.5 text-center">@s.CupoMaximo</td>
+                                    <td class="px-4 py-2.5 text-center">
+                                        @if (s.Activo)
+                                        {
+                                            <span class="bg-status-success/10 text-status-success text-label-bold font-label-bold px-2 py-1 rounded-full">Activo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="bg-status-error/10 text-status-error text-label-bold font-label-bold px-2 py-1 rounded-full">Inactivo</span>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end gap-1">
+                                            <a asp-page="/Servicios/Admin/GestionServicios" asp-route-id="@s.Id"
+                                               class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-earth-cream transition-colors"
+                                               aria-label="Editar" title="Editar">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </a>
+                                            <form method="post" asp-page-handler="Desactivar" class="inline"
+                                                  onsubmit="return confirm('¿Desactivar el servicio &quot;@s.Nombre&quot;?');">
+                                                <input type="hidden" name="id" value="@s.Id" />
+                                                <button type="submit"
+                                                        class="p-2 rounded-full text-on-surface-variant hover:text-status-error hover:bg-status-error/10 transition-colors"
+                                                        aria-label="Desactivar" title="Desactivar">
+                                                    <span class="material-symbols-outlined">block</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

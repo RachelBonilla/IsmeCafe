@@ -1,0 +1,57 @@
+name: Build and Deploy API
+
+env:
+  AZURE_WEBAPP_NAME: ismecafe
+  API_PROJECT: 'IsmeCafe.API/API/API.csproj'   # Proyecto web que se publica
+  DOTNET_VERSION: '8.0.x'
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'IsmeCafe.API/**'
+      - '!IsmeCafe.API/BD/**'          # Los cambios de BD los maneja DBDeploy.yml
+      - '.github/workflows/APIDeploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Replace connection string in appsettings.json
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: 'IsmeCafe.API/API/appsettings.json'
+        env:
+          ConnectionStrings.BD: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
+      - name: Restore
+        run: dotnet restore "${{ env.API_PROJECT }}"
+
+      - name: Build
+        run: dotnet build "${{ env.API_PROJECT }}" --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish "${{ env.API_PROJECT }}" --configuration Release --no-build --output "${{ github.workspace }}/publish"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ github.workspace }}/publish

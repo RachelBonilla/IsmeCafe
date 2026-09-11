@@ -1,0 +1,48 @@
+﻿@page
+@model Web.Pages.Servicios.Admin.GestionServiciosModel
+
+<section class="lg:col-span-3">
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-6">
+        <h2 class="text-headline-sm font-headline-sm text-coffee-bean">
+            @Model.Servicios.FirstOrDefault()?.Nombre</h2>
+
+        <p class="mt-2 text-on-surface">@Model.Servicios.FirstOrDefault()?.Descripcion</p>
+
+        <div class="mt-4 grid grid-cols-2 gap-4">
+            <div>
+                <p class="text-on-surface-variant"><strong>Duración:</strong> @Model.Servicios.FirstOrDefault()?.Duracion min</p>
+                <p class="text-on-surface-variant"><strong>Precio:</strong> ₡@Model.Servicios.FirstOrDefault()?.Precio.ToString("N0")</p>
+            </div>
+            <div>
+                <p class="text-on-surface-variant"><strong>Cupo Máximo:</strong> @Model.Servicios.FirstOrDefault()?.CupoMaximo</p>
+                <p class="text-on-surface-variant">
+                    @((Model.Servicios.FirstOrDefault()?.Activo ?? false) ? "Activo" : "Inactivo")
+
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-6 flex gap-2">
+            @if (Model.Servicios.FirstOrDefault()?.Activo == true)
+            {
+                <a asp-page="/Reservas/Crear" asp-route-idServicio="@Model.Servicios.FirstOrDefault()?.Id"
+                   class="p-2 rounded text-on-surface-variant hover:text-primary hover:bg-earth-cream transition-colors">
+                    Reservar
+                </a>
+            }
+            <a asp-page="/Servicios/Gestion"
+               class="p-2 rounded text-on-surface-variant hover:text-secondary hover:bg-earth-cream transition-colors">
+                Volver
+            </a>
+        </div>
+
+        <div class="mt-6 text-sm text-on-surface-variant">
+            <p><strong>Grupo:</strong> @Model.Servicios.FirstOrDefault()?.Grupo</p>
+            <p><strong>Fecha de creación:</strong> @Model.Servicios.FirstOrDefault()?.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</p>
+            @if (Model.Servicios.FirstOrDefault()?.FechaActualizacion.HasValue == true)
+            {
+                <p><strong>Última actualización:</strong> @Model.Servicios.FirstOrDefault()?.FechaActualizacion.Value.ToString("dd/MM/yyyy HH:mm")</p>
+            }
+        </div>
+    </div>
+</section>

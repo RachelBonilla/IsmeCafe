@@ -1,0 +1,179 @@
+﻿@page
+@model Web.Pages.Perfil.IndexModel
+
+@{
+    ViewData["Title"] = "Mi perfil";
+}
+
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter py-8">
+
+    <div class="mb-8">
+        <h1 class="text-headline-lg font-headline-lg text-coffee-bean">
+            Mi perfil
+        </h1>
+
+        <p class="text-on-surface-variant mt-2">
+            Consulta tu información personal y los datos asociados a tu cuenta.
+        </p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="mb-6 rounded-lg border border-red-300 bg-red-50 text-red-700 px-4 py-3">
+            @Model.Error
+        </div>
+    }
+    else if (Model.Usuario != null)
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Tarjeta principal -->
+            <div class="lg:col-span-1">
+                <div class="bg-surface-container-low border border-outline-variant rounded-2xl p-6 text-center">
+
+                    <div class="w-24 h-24 mx-auto rounded-full bg-earth-cream flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-5xl text-coffee-bean">
+                            person
+                        </span>
+                    </div>
+
+                    <h2 class="text-headline-sm font-headline-sm text-coffee-bean">
+                        @Model.Usuario.Nombre @Model.Usuario.Apellidos
+                    </h2>
+
+                    <p class="text-on-surface-variant mt-1">
+                        @Model.Usuario.NombreRol
+                    </p>
+
+                    <div class="mt-6 rounded-xl bg-earth-cream/60 px-4 py-5">
+                        <div class="flex items-center justify-center gap-2 text-coffee-bean">
+                            <span class="material-symbols-outlined text-gold-accent">
+                                stars
+                            </span>
+
+                            <span class="font-semibold">
+                                Puntos acumulados
+                            </span>
+                        </div>
+
+                        <p class="text-3xl font-bold text-coffee-bean mt-2">
+                            @Model.Usuario.Puntos
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Información -->
+            <div class="lg:col-span-2">
+
+                <div class="bg-white border border-outline-variant rounded-2xl overflow-hidden">
+
+                    <div class="px-6 py-5 border-b border-outline-variant">
+                        <h2 class="text-xl font-semibold text-coffee-bean">
+                            Información personal
+                        </h2>
+
+                        <p class="text-on-surface-variant mt-1">
+                            Datos registrados en tu cuenta.
+                        </p>
+                    </div>
+
+                    <div class="p-6 space-y-6">
+
+                        <!-- Nombre -->
+                        <div class="flex items-start gap-4">
+
+                            <div class="w-10 h-10 rounded-full bg-earth-cream/60 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-coffee-bean">
+                                    badge
+                                </span>
+                            </div>
+
+                            <div>
+                                <p class="text-sm text-on-surface-variant">
+                                    Nombre completo
+                                </p>
+
+                                <p class="font-semibold text-coffee-bean mt-1">
+                                    @Model.Usuario.Nombre @Model.Usuario.Apellidos
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <!-- Correo -->
+                        <div class="flex items-start gap-4">
+
+                            <div class="w-10 h-10 rounded-full bg-earth-cream/60 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-coffee-bean">
+                                    mail
+                                </span>
+                            </div>
+
+                            <div>
+                                <p class="text-sm text-on-surface-variant">
+                                    Correo electrónico
+                                </p>
+
+                                <p class="font-semibold text-coffee-bean mt-1">
+                                    @Model.Usuario.Correo
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="flex items-start gap-4">
+
+                            <div class="w-10 h-10 rounded-full bg-earth-cream/60 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-coffee-bean">
+                                    call
+                                </span>
+                            </div>
+
+                            <div>
+                                <p class="text-sm text-on-surface-variant">
+                                    Teléfono
+                                </p>
+
+                                <p class="font-semibold text-coffee-bean mt-1">
+                                    @(!string.IsNullOrWhiteSpace(Model.Usuario.Telefono)
+                                        ? Model.Usuario.Telefono
+                                        : "No registrado")
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <!-- Miembro desde -->
+                        <div class="flex items-start gap-4">
+
+                            <div class="w-10 h-10 rounded-full bg-earth-cream/60 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-coffee-bean">
+                                    calendar_month
+                                </span>
+                            </div>
+
+                            <div>
+                                <p class="text-sm text-on-surface-variant">
+                                    Miembro desde
+                                </p>
+
+                                <p class="font-semibold text-coffee-bean mt-1">
+                                    @Model.Usuario.FechaCreacion.ToString("dd/MM/yyyy")
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+</div>

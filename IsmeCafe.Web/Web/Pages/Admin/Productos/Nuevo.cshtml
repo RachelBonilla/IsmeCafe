@@ -1,0 +1,38 @@
+@page "/Admin/Nuevo-Producto"
+@model Web.Pages.Admin.Productos.NuevoModel
+@{
+    ViewData["Title"] = Model.EnEdicion ? "Editar producto" : "Nuevo producto";
+    Layout = "_AdminLayout";
+}
+
+<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+    <div>
+        <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">Gestión de catálogo</p>
+        <h1 class="text-headline-lg font-headline-lg text-coffee-bean">
+            @(Model.EnEdicion ? "Editar producto" : "Nuevo producto")
+        </h1>
+    </div>
+
+    <a asp-page="/Admin/Productos/Index"
+       class="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors text-label-bold font-label-bold">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver al listado
+    </a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-6 rounded-lg border px-4 py-3 text-body-sm @(Model.EsExito
+        ? "border-status-success bg-status-success/10 text-status-success"
+        : "border-status-error bg-status-error/10 text-status-error")">
+        @Model.Mensaje
+    </div>
+}
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <partial name="_ProductoForm" />
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

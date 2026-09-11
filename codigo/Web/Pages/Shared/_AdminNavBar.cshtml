@@ -1,0 +1,81 @@
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+    string itemClass(string page) => string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase)
+        ? "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gold-accent/15 text-gold-accent font-label-bold"
+        : "flex items-center gap-3 px-3 py-2.5 rounded-lg text-earth-cream/80 hover:bg-earth-cream/10 hover:text-gold-accent transition-colors";
+}
+<!-- AdminSideNav -->
+<aside class="hidden md:flex md:flex-col w-64 shrink-0 bg-primary-container text-earth-cream border-r border-outline sticky top-0 h-screen">
+    <!-- Marca -->
+    <a class="flex items-center gap-2 px-5 py-5 border-b border-outline/60" asp-page="/Productos/Admin">
+        <span class="material-symbols-outlined filled text-gold-accent">local_cafe</span>
+        <span class="text-headline-sm font-headline-sm text-earth-cream">Isme Café</span>
+        <span class="text-label-bold font-label-bold uppercase tracking-wider bg-gold-accent/20 text-gold-accent px-2 py-0.5 rounded-full">Admin</span>
+    </a>
+
+    <!-- Navegación -->
+    <nav class="flex-grow px-3 py-4 space-y-1 text-body-md">
+        <a class="@itemClass("/Admin/Index")" asp-page="/Admin/Index">
+            <span class="material-symbols-outlined">Home</span>
+            Inicio
+        </a>
+        <a class="@itemClass("/Productos/Admin")" asp-page="/Productos/Admin">
+            <span class="material-symbols-outlined">inventory_2</span>
+            Productos
+        </a>
+        <a class="@itemClass("__categorias")" href="#">
+            <span class="material-symbols-outlined">sell</span>
+            Categorías
+        </a>
+        <a class="@itemClass("/Servicios/Admin/GestionServicios")" asp-page="/Servicios/Admin/GestionServicios">
+            <span class="material-symbols-outlined">inventory_2</span>
+            Servicios
+        </a>
+        <a class="@itemClass("/Admin/Marketing/Descuentos")" asp-page="/Admin/Marketing/Descuentos">
+            <span class="material-symbols-outlined">sell</span>
+            Descuentos
+        </a>
+        <a class="@itemClass("/Admin/Marketing/Ofertas")" asp-page="/Admin/Marketing/Ofertas">
+            <span class="material-symbols-outlined">local_offer</span>
+            Ofertas
+        </a>
+        <a class="@itemClass("/Admin/Marketing/Campanas")" asp-page="/Admin/Marketing/Campanas">
+            <span class="material-symbols-outlined">campaign</span>
+            Campañas
+        </a>
+        <a class="@itemClass("__reportes")" href="#">
+            <span class="material-symbols-outlined">monitoring</span>
+            Reportes
+        </a>
+        <a class="@itemClass("/Admin/Usuarios/Index")" asp-page="/Admin/Usuarios/Index">
+            <span class="material-symbols-outlined">Group</span>
+            Usuarios
+        </a>
+    </nav>
+
+    <!-- Pie -->
+    <div class="px-3 py-4 border-t border-outline/60 space-y-1">
+        <a asp-page="/Productos/Index"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-earth-cream/80 hover:bg-earth-cream/10 hover:text-gold-accent transition-colors">
+            <span class="material-symbols-outlined">storefront</span>
+            Ver sitio
+        </a>
+
+        <div class="mt-2 px-3 py-2 space-y-2">
+            <div class="flex items-center gap-3 text-earth-cream/70">
+                <span class="material-symbols-outlined">account_circle</span>
+                <span class="text-body-sm font-medium">Administrador</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-3 py-4 border-t border-outline/60 space-y-1">
+        <form method="post" asp-page="/Login/Logout">
+            <button type="submit"
+                    class="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="text-body-sm">Cerrar Sesión</span>
+            </button>
+        </form>
+    </div>
+</aside>

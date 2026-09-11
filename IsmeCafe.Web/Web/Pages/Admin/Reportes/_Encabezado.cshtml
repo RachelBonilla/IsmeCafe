@@ -1,0 +1,40 @@
+@model Web.Pages.Admin.Reportes.IndexModel
+@{
+    string tabClass(string valor) => Model.Reporte == valor
+        ? "reportes-tab reportes-tab--activa"
+        : "reportes-tab";
+}
+
+<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
+    <div>
+        <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">Módulo de reportes</p>
+        <h1 class="text-headline-lg font-headline-lg text-coffee-bean">Reportes</h1>
+    </div>
+
+    <a class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors"
+       asp-page-handler="Exportar"
+       asp-route-reporte="@Model.Reporte"
+       asp-route-idCategoria="@Model.IdCategoria"
+       asp-route-activo="@Model.Activo"
+       asp-route-fechaInicio="@(Model.FechaInicio?.ToString("yyyy-MM-dd"))"
+       asp-route-fechaFin="@(Model.FechaFin?.ToString("yyyy-MM-dd"))"
+       asp-route-idEmpleado="@Model.IdEmpleado">
+        <span class="material-symbols-outlined">download</span>
+        Exportar CSV
+    </a>
+</div>
+
+<nav class="reportes-tabs mb-6" aria-label="Tipos de reporte">
+    <a class="@tabClass("inventario")" asp-page="/Admin/Reportes/Index" asp-route-reporte="inventario">
+        <span class="material-symbols-outlined">inventory_2</span>
+        Inventario
+    </a>
+    <a class="@tabClass("catalogo")" asp-page="/Admin/Reportes/Index" asp-route-reporte="catalogo">
+        <span class="material-symbols-outlined">menu_book</span>
+        Catálogo
+    </a>
+    <a class="@tabClass("ventas")" asp-page="/Admin/Reportes/Index" asp-route-reporte="ventas">
+        <span class="material-symbols-outlined">payments</span>
+        Ventas por empleado
+    </a>
+</nav>

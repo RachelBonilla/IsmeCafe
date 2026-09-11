@@ -1,0 +1,104 @@
+@model Abstracciones.Modelos.ProductoResponse
+@using System.Globalization
+@{
+    var culturaColones = new CultureInfo("es-CR");
+    Func<decimal, string> colones = valor => valor.ToString("C0", culturaColones);
+
+    var agotado = !(Model.Cantidad > 0);
+    var tieneDescuento = Model.PorcentajeDescuento != null && Model.PrecioConDescuento != null;
+}
+
+<article class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col h-full transition-all duration-300 @(agotado ? "opacity-75" : "product-card-hover")">
+
+    <div class="relative h-64 bg-surface-container-low overflow-hidden @(agotado ? "grayscale" : "")">
+        @if (!string.IsNullOrEmpty(Model.Imagen))
+        {
+            <img src="@Model.Imagen" alt="@Model.Nombre" class="w-full h-full object-cover" />
+        }
+        else
+        {
+            <div class="w-full h-full flex items-center justify-center text-outline">
+                <span class="material-symbols-outlined" style="font-size: 56px;">local_cafe</span>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Categoria))
+        {
+            <div class="absolute top-3 left-3">
+                <span class="bg-primary/80 text-on-primary text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider backdrop-blur-sm">
+                    @Model.Categoria
+                </span>
+            </div>
+        }
+
+        @if (tieneDescuento && !agotado)
+        {
+            <div class="absolute top-3 right-3">
+                <span class="bg-secondary text-on-secondary text-[11px] font-bold px-2 py-1 rounded-full shadow-sm">
+                    -@Model.PorcentajeDescuento%
+                </span>
+            </div>
+        }
+
+        @if (agotado)
+        {
+            <div class="absolute inset-0 bg-inverse-surface/40 flex items-center justify-center backdrop-blur-[2px]">
+                <span class="bg-surface text-on-surface px-4 py-2 rounded-full font-label-bold text-label-bold">
+                    Agotado Temporalmente
+                </span>
+            </div>
+        }
+    </div>
+
+    <div class="p-5 flex flex-col flex-grow">
+        <div class="flex justify-between items-start mb-2">
+            <h3 class="font-headline-sm text-headline-sm text-coffee-bean line-clamp-2">@Model.Nombre</h3>
+            <button type="button" class="text-on-surface-variant hover:text-gold-accent transition-colors" aria-label="Favorito">
+                <span class="material-symbols-outlined">favorite_border</span>
+            </button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Descripcion))
+        {
+            <p class="text-body-sm text-on-surface-variant mb-4 flex-grow line-clamp-3">@Model.Descripcion</p>
+        }
+        else
+        {
+            <div class="flex-grow"></div>
+        }
+
+        <div class="flex items-center justify-between mt-auto pt-4 border-t border-outline-variant/30">
+            <div class="flex flex-col">
+                @if (tieneDescuento)
+                {
+                    <span class="text-xs text-on-surface-variant line-through">@colones(Model.Precio)</span>
+                    <span class="font-label-bold text-label-bold text-lg text-secondary">@colones(Model.PrecioConDescuento!.Value)</span>
+                }
+                else
+                {
+                    <span class="font-label-bold text-label-bold text-lg @(agotado ? "text-on-surface-variant" : "text-primary")">
+                        @colones(Model.Precio)
+                    </span>
+                }
+            </div>
+
+            @if (agotado || !Model.Activo)
+            {
+                <button type="button" disabled aria-label="Agotado"
+                        class="flex items-center justify-center bg-surface-container-high text-on-surface-variant/50 w-10 h-10 rounded-full cursor-not-allowed">
+                    <span class="material-symbols-outlined">add_shopping_cart</span>
+                </button>
+            }
+            else
+            {
+                <form method="post" asp-page="/Productos/Index" asp-page-handler="Agregar">
+                    <input type="hidden" name="idProducto" value="@Model.Id" />
+                    <button type="submit" aria-label="Agregar al carrito"
+                            class="flex items-center justify-center bg-secondary hover:bg-secondary/90 text-on-secondary w-10 h-10 rounded-full transition-colors shadow-sm">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_shopping_cart</span>
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</article>

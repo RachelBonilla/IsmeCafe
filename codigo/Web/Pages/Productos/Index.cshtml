@@ -1,0 +1,48 @@
+@page
+@model Web.Pages.Productos.IndexModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Catálogo";
+    var jsonOpts = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+}
+
+<partial name="_hero" />
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-8 rounded-lg border border-outline-variant bg-surface-container-low text-on-surface-variant px-4 py-3">@Model.Mensaje</div>
+}
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="mb-8 rounded-lg border border-red-300 bg-red-50 text-red-700 px-4 py-3">@Model.Error</div>
+}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    @foreach (var producto in Model.Productos)
+    {
+        var props = JsonSerializer.Serialize(new { producto }, jsonOpts);
+        <div class="h-full flex flex-col gap-2">
+
+            <div class="h-full" data-react="tarjeta" data-props="@props"></div>
+
+            @if (producto.Activo && producto.Cantidad > 0)
+            {
+                <form method="post" asp-page-handler="Agregar">
+                    <input type="hidden" name="idProducto" value="@producto.Id" />
+                    <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined">add_shopping_cart</span>
+                        Agregar al carrito
+                    </button>
+                </form>
+            }
+            else
+            {
+                <button type="button" disabled
+                        class="w-full inline-flex items-center justify-center gap-2 bg-gray-300 text-gray-600 px-4 py-2 rounded-full text-label-bold font-label-bold cursor-not-allowed">
+                    Agotado
+                </button>
+            }
+        </div>
+    }
+</div>

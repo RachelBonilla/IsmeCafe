@@ -1,0 +1,88 @@
+@model Web.Pages.Admin.Reportes.IndexModel
+@{
+    var inputClass = "w-full bg-earth-cream/30 border border-outline-variant rounded-lg px-4 py-2 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+    var selectClass = "w-full appearance-none bg-surface-container border border-outline-variant rounded-lg px-4 py-2 pr-10 text-body-md focus:outline-none focus:border-primary cursor-pointer";
+}
+
+<form method="get" class="reportes-filtros">
+    <input type="hidden" name="reporte" value="catalogo" />
+
+    <div class="reportes-filtros__campo">
+        <label for="activo" class="reportes-label">Estado</label>
+        <div class="relative">
+            <select id="activo" name="activo" class="@selectClass">
+                <option value="" selected="@(!Model.Activo.HasValue)">Todos</option>
+                <option value="true" selected="@(Model.Activo == true)">Solo activos</option>
+                <option value="false" selected="@(Model.Activo == false)">Solo inactivos</option>
+            </select>
+            <span class="material-symbols-outlined reportes-select__icono">expand_more</span>
+        </div>
+    </div>
+
+    <div class="reportes-filtros__campo">
+        <label for="reportes-buscar-catalogo" class="reportes-label">Buscar</label>
+        <input id="reportes-buscar-catalogo" type="search" placeholder="Nombre del producto o servicio…"
+               class="@inputClass" data-reportes-buscar data-reportes-tabla="tabla-catalogo" autocomplete="off" />
+    </div>
+
+    <div class="reportes-filtros__acciones">
+        <button type="submit" class="reportes-boton reportes-boton--primario">
+            <span class="material-symbols-outlined">filter_alt</span>
+            Aplicar filtro
+        </button>
+        <a asp-page="/Admin/Reportes/Index" asp-route-reporte="catalogo" class="reportes-boton">Limpiar</a>
+    </div>
+</form>
+
+<div class="reportes-resumen">
+    <div class="reportes-tarjeta">
+        <div class="reportes-tarjeta__valor">@Model.TotalCatalogo</div>
+        <div class="reportes-tarjeta__etiqueta">Elementos</div>
+    </div>
+    <div class="reportes-tarjeta">
+        <div class="reportes-tarjeta__valor text-status-success">@Model.TotalCatalogoActivos</div>
+        <div class="reportes-tarjeta__etiqueta">Activos</div>
+    </div>
+    <div class="reportes-tarjeta">
+        <div class="reportes-tarjeta__valor text-on-surface-variant">@(Model.TotalCatalogo - Model.TotalCatalogoActivos)</div>
+        <div class="reportes-tarjeta__etiqueta">Inactivos</div>
+    </div>
+</div>
+
+@if (Model.Catalogo.Count > 0)
+{
+    <div class="reportes-tabla__contenedor">
+        <table class="reportes-tabla" id="tabla-catalogo">
+            <thead>
+                <tr>
+                    <th data-reportes-orden="texto">Tipo</th>
+                    <th data-reportes-orden="texto">Nombre</th>
+                    <th data-reportes-orden="texto">Categoría</th>
+                    <th data-reportes-orden="numero" class="text-right">Precio</th>
+                    <th data-reportes-orden="numero" class="text-right">Existencias / Cupo</th>
+                    <th data-reportes-orden="texto">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var linea in Model.Catalogo)
+                {
+                    <tr>
+                        <td>
+                            <span class="reportes-chip reportes-chip--tipo">@linea.Tipo</span>
+                        </td>
+                        <td class="font-label-bold">@linea.Nombre</td>
+                        <td>@linea.Categoria</td>
+                        <td class="text-right" data-valor="@Model.Crudo(linea.Precio)">@Model.Colones(linea.Precio)</td>
+                        <td class="text-right" data-valor="@linea.Existencias">@linea.Existencias</td>
+                        <td>
+                            <span class="reportes-chip @(linea.Activo ? "reportes-chip--activo" : "reportes-chip--inactivo")">
+                                @(linea.Activo ? "Activo" : "Inactivo")
+                            </span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p class="reportes-vacio" data-reportes-sin-resultados hidden>Ningún elemento coincide con la búsqueda.</p>
+    </div>
+}

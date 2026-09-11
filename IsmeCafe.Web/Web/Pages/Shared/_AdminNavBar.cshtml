@@ -1,0 +1,123 @@
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+    string itemClass(string page) => string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase)
+        ? "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gold-accent/15 text-gold-accent font-label-bold"
+        : "flex items-center gap-3 px-3 py-2.5 rounded-lg text-earth-cream/80 hover:bg-earth-cream/10 hover:text-gold-accent transition-colors";
+}
+
+<!-- AdminSideNav -->
+<aside class="hidden md:flex md:flex-col w-64 shrink-0 bg-primary-container text-earth-cream border-r border-outline sticky top-0 h-screen">
+
+    <!-- Marca -->
+    <a class="flex items-center gap-2 px-5 py-5 border-b border-outline/60" asp-page="/Admin/Productos/Index">
+        <span class="material-symbols-outlined filled text-gold-accent">local_cafe</span>
+        <span class="text-headline-sm font-headline-sm text-earth-cream">Isme Café</span>
+        <span class="text-label-bold font-label-bold uppercase tracking-wider bg-gold-accent/20 text-gold-accent px-2 py-0.5 rounded-full">Admin</span>
+    </a>
+
+    <!-- Navegación -->
+    <nav class="flex-grow px-3 py-4 space-y-1 text-body-md">
+
+        <a class="@itemClass("/Admin/Reportes/Index")" asp-page="/Admin/Reportes/Index">
+            <span class="material-symbols-outlined">monitoring</span>
+            Reportes
+        </a>
+
+        <a class="@itemClass("/Admin/Productos/Index")" asp-page="/Admin/Productos/Index">
+            <span class="material-symbols-outlined">inventory_2</span>
+            Productos
+        </a>
+
+        <a class="@itemClass("/Servicios/Admin/GestionServicios")" asp-page="/Servicios/Admin/GestionServicios">
+            <span class="material-symbols-outlined">room_service</span>
+            Servicios
+        </a>
+
+        <a class="@itemClass("/Admin/Reservas/GestionReservas")" asp-page="/Admin/Reservas/GestionReservas">
+            <span class="material-symbols-outlined">event_available</span>
+            Reservas
+        </a>
+
+        <a class="@itemClass("/Admin/Pedidos/GestionPedidos")" asp-page="/Admin/Pedidos/GestionPedidos">
+            <span class="material-symbols-outlined">receipt_long</span>
+            Pedidos
+        </a>
+
+        <a class="@itemClass("/Admin/Marketing/Descuentos")" asp-page="/Admin/Marketing/Descuentos">
+            <span class="material-symbols-outlined">sell</span>
+            Descuentos
+        </a>
+
+        <a class="@itemClass("/Admin/Marketing/Ofertas")" asp-page="/Admin/Marketing/Ofertas">
+            <span class="material-symbols-outlined">local_offer</span>
+            Ofertas
+        </a>
+
+        <a class="@itemClass("/Admin/Marketing/Campanas")" asp-page="/Admin/Marketing/Campanas">
+            <span class="material-symbols-outlined">campaign</span>
+            Campañas
+        </a>
+
+        @if (User.IsInRole(Roles.Administrador))
+        {
+            <a class="@itemClass("/Admin/Usuarios/Index")"
+               asp-page="/Admin/Usuarios/Index">
+                <span class="material-symbols-outlined">group</span>
+                Usuarios
+            </a>
+        }
+
+    </nav>
+
+    <!-- Pie -->
+    <div class="px-3 py-4 border-t border-outline/60 space-y-1">
+
+        <a asp-page="/Productos/Index"
+           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-earth-cream/80 hover:bg-earth-cream/10 hover:text-gold-accent transition-colors">
+
+            <span class="material-symbols-outlined">storefront</span>
+            Ver sitio
+        </a>
+        <div class="mt-2 px-3 py-2 space-y-2">
+
+    <div class="flex items-start gap-3 text-earth-cream/70">
+
+        <span class="material-symbols-outlined mt-0.5">
+            account_circle
+        </span>
+
+        <div class="flex flex-col">
+
+            <span class="text-body-sm font-medium text-earth-cream">
+                @User.Identity?.Name
+            </span>
+
+            <span class="text-xs text-earth-cream/60">
+                @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+            </span>
+        </div>
+    </div>
+
+</div>
+    </div>
+
+    <div class="px-3 py-4 border-t border-outline/60 space-y-1">
+
+        <form method="post" asp-page="/Login/Logout">
+
+            <button type="submit"
+                    class="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors">
+
+                <span class="material-symbols-outlined">logout</span>
+
+                <span class="text-body-sm">
+                    Cerrar Sesión
+                </span>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>

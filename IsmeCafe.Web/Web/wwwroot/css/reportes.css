@@ -1,0 +1,359 @@
+
+:root {
+    --reportes-coffee-bean: #3D2B1F;
+    --reportes-gold-accent: #D4AF37;
+    --reportes-earth-cream: #EBE3D5;
+    --reportes-outline-variant: #d3c3bd;
+    --reportes-on-surface-variant: #4f4540;
+    --reportes-surface-lowest: #fffbff;
+    --reportes-surface-low: #f9f2f0;
+    --reportes-surface-high: #eee7e5;
+    --reportes-success: #3E5C3E;
+    --reportes-warning: #B48924;
+    --reportes-error: #8E3232;
+    --reportes-secondary: #745b18;
+}
+
+/* ----------------------------------------------------------------- */
+/* Pestañas                                                           */
+/* ----------------------------------------------------------------- */
+.reportes-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--reportes-outline-variant);
+    padding-bottom: 0.75rem;
+}
+
+.reportes-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border: 1px solid var(--reportes-outline-variant);
+    border-radius: 9999px;
+    background-color: var(--reportes-surface-lowest);
+    color: var(--reportes-on-surface-variant);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.reportes-tab:hover {
+    border-color: var(--reportes-gold-accent);
+    color: var(--reportes-coffee-bean);
+}
+
+.reportes-tab--activa {
+    background-color: var(--reportes-coffee-bean);
+    border-color: var(--reportes-coffee-bean);
+    color: var(--reportes-earth-cream);
+    font-weight: 700;
+}
+
+.reportes-tab--activa:hover {
+    color: var(--reportes-gold-accent);
+}
+
+.reportes-tab__hu {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border-radius: 9999px;
+    background-color: rgba(212, 175, 55, 0.2);
+    color: var(--reportes-secondary);
+}
+
+.reportes-tab--activa .reportes-tab__hu {
+    background-color: rgba(212, 175, 55, 0.25);
+    color: var(--reportes-gold-accent);
+}
+
+/* ----------------------------------------------------------------- */
+/* Filtros                                                            */
+/* ----------------------------------------------------------------- */
+.reportes-filtros {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-items: end;
+    background-color: var(--reportes-surface-lowest);
+    border: 1px solid var(--reportes-outline-variant);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .reportes-filtros {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+    }
+}
+
+@media (min-width: 1280px) {
+    .reportes-filtros {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+    }
+}
+
+.reportes-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--reportes-coffee-bean);
+    margin-bottom: 0.3rem;
+}
+
+.reportes-select__icono {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--reportes-on-surface-variant);
+}
+
+.reportes-filtros__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.reportes-boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--reportes-outline-variant);
+    border-radius: 9999px;
+    background-color: transparent;
+    color: var(--reportes-on-surface-variant);
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.reportes-boton:hover {
+    background-color: var(--reportes-surface-high);
+    color: var(--reportes-coffee-bean);
+}
+
+.reportes-boton--primario {
+    background-color: var(--reportes-coffee-bean);
+    border-color: var(--reportes-coffee-bean);
+    color: var(--reportes-earth-cream);
+}
+
+.reportes-boton--primario:hover {
+    background-color: #2c1f16;
+    color: var(--reportes-gold-accent);
+}
+
+.reportes-error-cliente {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--reportes-error);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* ----------------------------------------------------------------- */
+/* Tarjetas de resumen                                                */
+/* ----------------------------------------------------------------- */
+.reportes-resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.reportes-tarjeta {
+    background-color: var(--reportes-surface-lowest);
+    border: 1px solid var(--reportes-outline-variant);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+}
+
+.reportes-tarjeta__valor {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--reportes-coffee-bean);
+}
+
+.reportes-tarjeta__etiqueta {
+    font-size: 0.8rem;
+    color: var(--reportes-on-surface-variant);
+    margin-top: 0.2rem;
+}
+
+/* ----------------------------------------------------------------- */
+/* Tabla                                                              */
+/* ----------------------------------------------------------------- */
+.reportes-tabla__contenedor {
+    background-color: var(--reportes-surface-lowest);
+    border: 1px solid var(--reportes-outline-variant);
+    border-radius: 0.5rem;
+    overflow-x: auto;
+}
+
+.reportes-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.reportes-tabla thead th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background-color: var(--reportes-surface-low);
+    border-bottom: 1px solid var(--reportes-outline-variant);
+    color: var(--reportes-coffee-bean);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.reportes-tabla th.text-right,
+.reportes-tabla td.text-right {
+    text-align: right;
+}
+
+.reportes-tabla th[data-reportes-orden] {
+    cursor: pointer;
+    user-select: none;
+}
+
+.reportes-tabla th[data-reportes-orden]:hover {
+    color: var(--reportes-secondary);
+}
+
+.reportes-tabla th[data-reportes-orden]::after {
+    content: '\2195';
+    font-size: 0.75rem;
+    opacity: 0.35;
+    margin-left: 0.35rem;
+}
+
+.reportes-tabla th[data-orden-activo='asc']::after {
+    content: '\2191';
+    opacity: 1;
+}
+
+.reportes-tabla th[data-orden-activo='desc']::after {
+    content: '\2193';
+    opacity: 1;
+}
+
+.reportes-tabla tbody td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(211, 195, 189, 0.5);
+    color: var(--reportes-on-surface-variant);
+    vertical-align: middle;
+}
+
+.reportes-tabla tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.reportes-tabla tbody tr:hover {
+    background-color: var(--reportes-surface-low);
+}
+
+.reportes-tabla tfoot td {
+    padding: 0.75rem 1rem;
+    border-top: 2px solid var(--reportes-outline-variant);
+    background-color: var(--reportes-surface-low);
+    color: var(--reportes-coffee-bean);
+}
+
+/* HU-31 CA2: resaltado de existencias bajas. */
+.reportes-fila--alerta {
+    background-color: rgba(180, 137, 36, 0.09);
+    box-shadow: inset 3px 0 0 var(--reportes-warning);
+}
+
+.reportes-fila--alerta:hover {
+    background-color: rgba(180, 137, 36, 0.16) !important;
+}
+
+.reportes-icono-alerta {
+    font-size: 1.05rem;
+    vertical-align: -0.2rem;
+    margin-right: 0.25rem;
+    color: var(--reportes-warning);
+}
+
+.reportes-fila--sin-asignar td:first-child {
+    font-style: italic;
+    opacity: 0.85;
+}
+
+/* ----------------------------------------------------------------- */
+/* Chips de estado                                                    */
+/* ----------------------------------------------------------------- */
+.reportes-chip {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.reportes-chip--disponible,
+.reportes-chip--activo {
+    background-color: rgba(62, 92, 62, 0.15);
+    color: var(--reportes-success);
+}
+
+.reportes-chip--bajo {
+    background-color: rgba(180, 137, 36, 0.18);
+    color: var(--reportes-warning);
+}
+
+.reportes-chip--agotado {
+    background-color: rgba(142, 50, 50, 0.15);
+    color: var(--reportes-error);
+}
+
+.reportes-chip--inactivo {
+    background-color: rgba(79, 69, 64, 0.12);
+    color: var(--reportes-on-surface-variant);
+}
+
+.reportes-chip--tipo {
+    background-color: rgba(116, 91, 24, 0.14);
+    color: var(--reportes-secondary);
+}
+
+/* ----------------------------------------------------------------- */
+/* Vacíos                                                             */
+/* ----------------------------------------------------------------- */
+.reportes-vacio {
+    padding: 1.5rem 1rem;
+    margin: 0;
+    text-align: center;
+    color: var(--reportes-on-surface-variant);
+    font-size: 0.9rem;
+}
+
+/* Impresión: solo la tabla. */
+@media print {
+    .reportes-tabs,
+    .reportes-filtros,
+    aside,
+    header,
+    footer {
+        display: none !important;
+    }
+
+    .reportes-tabla__contenedor {
+        border: none;
+        overflow: visible;
+    }
+}

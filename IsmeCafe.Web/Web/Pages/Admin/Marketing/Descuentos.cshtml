@@ -1,0 +1,235 @@
+﻿@page
+@model Web.Pages.Admin.Marketing.DescuentosModel
+@{
+    ViewData["Title"] = "Descuentos";
+    Layout = "_AdminLayout";
+}
+
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">Marketing</p>
+        <h1 class="text-headline-lg font-headline-lg text-coffee-bean">Descuentos</h1>
+        <p class="text-body-sm text-on-surface-variant mt-1">Gestión de descuentos por producto</p>
+    </div>
+    <button type="button" onclick="abrirModal('modalCrearDescuento')"
+            class="flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full font-label-bold text-label-bold hover:bg-primary/90 transition-colors">
+        <span class="material-symbols-outlined" style="font-size:18px">add</span>
+        Nuevo descuento
+    </button>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-6 rounded-lg border px-4 py-3 text-body-sm @(Model.EsExito
+                 ? "border-status-success bg-status-success/10 text-status-success"
+                 : "border-status-error bg-status-error/10 text-status-error")">
+        @Model.Mensaje
+    </div>
+}
+
+@if (Model.Descuentos.Count == 0)
+{
+    <div class="text-center py-16 text-on-surface-variant">
+        <span class="material-symbols-outlined" style="font-size:48px">sell</span>
+        <p class="mt-2 text-body-md">No hay descuentos registrados.</p>
+    </div>
+}
+else
+{
+    <div class="overflow-x-auto rounded-xl border border-outline-variant">
+        <table class="w-full text-body-sm">
+            <thead class="bg-surface-container text-on-surface-variant font-label-bold text-label-bold">
+                <tr>
+                    <th class="text-left px-4 py-3">Producto</th>
+                    <th class="text-left px-4 py-3">Precio</th>
+                    <th class="text-left px-4 py-3">Descuento</th>
+                    <th class="text-left px-4 py-3">Precio final</th>
+                    <th class="text-left px-4 py-3">Vigencia</th>
+                    <th class="text-left px-4 py-3">Estado</th>
+                    <th class="text-left px-4 py-3">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant">
+                @foreach (var d in Model.Descuentos)
+                {
+                    var precioFinal = d.PrecioProducto * (1 - d.PorcentajeDescuento / 100m);
+                    var vigente = d.Activo && DateTime.Now >= d.FechaInicio && DateTime.Now <= d.FechaFin;
+                    <tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors">
+                        <td class="px-4 py-3 font-medium text-coffee-bean">@d.NombreProducto</td>
+                        <td class="px-4 py-3 text-on-surface-variant line-through">₡@d.PrecioProducto.ToString("N0")</td>
+                        <td class="px-4 py-3">
+                            <span class="bg-secondary-container text-on-secondary-container px-2 py-1 rounded-full text-xs font-bold">
+                                -@d.PorcentajeDescuento%
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 font-bold text-primary">₡@precioFinal.ToString("N0")</td>
+                        <td class="px-4 py-3 text-on-surface-variant">
+                            @d.FechaInicio.ToString("dd/MM/yyyy") → @d.FechaFin.ToString("dd/MM/yyyy")
+                        </td>
+                        <td class="px-4 py-3">
+                            @if (vigente)
+                            {
+                                <span class="bg-status-success/20 text-status-success px-2 py-1 rounded-full text-xs font-bold">Vigente</span>
+                            }
+                            else
+                            {
+                                <span class="bg-surface-container text-on-surface-variant px-2 py-1 rounded-full text-xs font-bold">Inactivo</span>
+                            }
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="abrirModal('modalEditarDescuento-@d.Id')"
+                                        class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors" title="Editar">
+                                    <span class="material-symbols-outlined" style="font-size:18px">edit</span>
+                                </button>
+                                <form method="post" asp-page-handler="Eliminar" class="inline"
+                                      onsubmit="return confirm('¿Desactivar el descuento de &quot;@d.NombreProducto&quot;?');">
+                                    <input type="hidden" name="id" value="@d.Id" />
+                                    <button type="submit"
+                                            class="p-1.5 rounded-lg text-on-surface-variant hover:bg-error-container hover:text-error transition-colors" title="Desactivar">
+                                        <span class="material-symbols-outlined" style="font-size:18px">block</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!--Modal de nuevo descuento-->
+<div id="modalCrearDescuento" class="@(Model.AbrirModalCrear ? "" : "hidden") fixed inset-0 bg-inverse-surface/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-md">
+        <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant">
+            <h2 class="text-headline-sm font-headline-sm text-coffee-bean">Nuevo descuento</h2>
+            <button type="button" onclick="cerrarModal('modalCrearDescuento')" class="text-on-surface-variant hover:text-primary transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <form method="post" asp-page-handler="Guardar" class="px-6 py-4 flex flex-col gap-4">
+            <div asp-validation-summary="ModelOnly" class="text-status-error text-body-sm"></div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-label-bold font-label-bold text-on-surface-variant">Producto</label>
+                <select name="Entrada.IdProducto" class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary">
+                    <option value="">— Seleccioná un producto —</option>
+                    @foreach (var p in Model.Productos)
+                    {
+                        <option value="@p.Id">@p.Nombre — ₡@p.Precio.ToString("N0")</option>
+                    }
+                </select>
+                <span asp-validation-for="Entrada.IdProducto" class="text-status-error text-body-sm"></span>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-label-bold font-label-bold text-on-surface-variant">Porcentaje de descuento (%)</label>
+                <input name="Entrada.PorcentajeDescuento" type="number" min="0.01" max="100" step="0.01" placeholder="Ej: 15"
+                       class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary" />
+                <span asp-validation-for="Entrada.PorcentajeDescuento" class="text-status-error text-body-sm"></span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Fecha inicio</label>
+                    <input name="Entrada.FechaInicio" type="datetime-local"
+                           class="border border-outline-variant rounded-lg px-3 py-2 text-body-sm bg-surface focus:outline-none focus:border-primary" />
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Fecha fin</label>
+                    <input name="Entrada.FechaFin" type="datetime-local"
+                           class="border border-outline-variant rounded-lg px-3 py-2 text-body-sm bg-surface focus:outline-none focus:border-primary" />
+                </div>
+            </div>
+
+            <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" name="Entrada.Activo" value="true" checked
+                       class="w-4 h-4 accent-primary" />
+                <span class="text-body-md text-on-surface">Activo</span>
+            </label>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-outline-variant">
+                <button type="button" onclick="cerrarModal('modalCrearDescuento')"
+                        class="px-4 py-2 rounded-full text-label-bold font-label-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="px-4 py-2 rounded-full text-label-bold font-label-bold bg-primary text-on-primary hover:bg-primary/90 transition-colors">
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Modal de edición de descuento-->
+@foreach (var d in Model.Descuentos)
+{
+    <div id="modalEditarDescuento-@d.Id" class="@(Model.AbrirModalEditar == d.Id ? "" : "hidden") fixed inset-0 bg-inverse-surface/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-surface-container-lowest rounded-2xl shadow-xl w-full max-w-md">
+            <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-outline-variant">
+                <h2 class="text-headline-sm font-headline-sm text-coffee-bean">Editar descuento</h2>
+                <button type="button" onclick="cerrarModal('modalEditarDescuento-@d.Id')" class="text-on-surface-variant hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form method="post" asp-page-handler="Guardar" class="px-6 py-4 flex flex-col gap-4">
+                <input type="hidden" name="EditId" value="@d.Id" />
+                <div asp-validation-summary="ModelOnly" class="text-status-error text-body-sm"></div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Producto</label>
+                    <select name="Entrada.IdProducto" class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary">
+                        @foreach (var p in Model.Productos)
+                        {
+                            <option value="@p.Id" selected="@(p.Id == d.IdProducto)">@p.Nombre — ₡@p.Precio.ToString("N0")</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-label-bold font-label-bold text-on-surface-variant">Porcentaje de descuento (%)</label>
+                    <input name="Entrada.PorcentajeDescuento" type="number" min="0.01" max="100" step="0.01" value="@d.PorcentajeDescuento"
+                           class="border border-outline-variant rounded-lg px-3 py-2 text-body-md bg-surface focus:outline-none focus:border-primary" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-label-bold font-label-bold text-on-surface-variant">Fecha inicio</label>
+                        <input name="Entrada.FechaInicio" type="datetime-local" value="@d.FechaInicio.ToString("yyyy-MM-ddTHH:mm")"
+                               class="border border-outline-variant rounded-lg px-3 py-2 text-body-sm bg-surface focus:outline-none focus:border-primary" />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-label-bold font-label-bold text-on-surface-variant">Fecha fin</label>
+                        <input name="Entrada.FechaFin" type="datetime-local" value="@d.FechaFin.ToString("yyyy-MM-ddTHH:mm")"
+                               class="border border-outline-variant rounded-lg px-3 py-2 text-body-sm bg-surface focus:outline-none focus:border-primary" />
+                    </div>
+                </div>
+
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="Entrada.Activo" value="true" checked="@d.Activo"
+                           class="w-4 h-4 accent-primary" />
+                    <span class="text-body-md text-on-surface">Activo</span>
+                </label>
+
+                <div class="flex justify-end gap-3 pt-2 border-t border-outline-variant">
+                    <button type="button" onclick="cerrarModal('modalEditarDescuento-@d.Id')"
+                            class="px-4 py-2 rounded-full text-label-bold font-label-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 rounded-full text-label-bold font-label-bold bg-primary text-on-primary hover:bg-primary/90 transition-colors">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

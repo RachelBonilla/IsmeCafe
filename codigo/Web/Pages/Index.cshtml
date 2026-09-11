@@ -1,0 +1,112 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<!-- Bienvenida -->
+<section class="relative overflow-hidden rounded-lg shadow-sm bg-coffee-bean min-h-[440px] md:min-h-[520px] flex items-center"
+         style="background-image: linear-gradient(90deg, rgba(43,26,18,0.92) 0%, rgba(43,26,18,0.65) 42%, rgba(43,26,18,0.15) 100%), url('https://plus.unsplash.com/premium_photo-1666976923529-f0366d02d726?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center;">
+    <div class="w-full px-6 md:px-12 py-12">
+        <!-- Logo insignia -->
+        <div class="w-16 h-16 md:w-20 md:h-20 rounded-full border-2 border-gold-accent flex items-center justify-center mb-8">
+            <span class="material-symbols-outlined filled text-gold-accent" style="font-size: 2.25rem;">local_cafe</span>
+        </div>
+
+        <h1 class="text-display-hero font-display-hero text-earth-cream max-w-2xl leading-none mb-6">
+            Bienvenido a<br />Isme Café
+        </h1>
+
+        <p class="text-body-lg text-earth-cream/80 max-w-md mb-8">
+            Descubre la esencia de las montañas de Los Santos. Amor, dedicación y sueños
+            en cada taza de nuestro café artesanal de especialidad.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+            <a asp-page="/Productos/Index"
+               class="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined filled">shopping_bag</span>
+                Comprar Ahora
+            </a>
+            <a href="#historia"
+               class="inline-flex items-center gap-2 border border-earth-cream/60 text-earth-cream px-6 py-3 rounded-full text-label-bold font-label-bold hover:bg-earth-cream/10 transition-colors">
+                Nuestra Historia
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Origen y Tradición -->
+<section id="historia" class="py-stack-lg text-center max-w-3xl mx-auto scroll-mt-24">
+    <span class="material-symbols-outlined text-gold-accent mb-4" style="font-size: 2rem;">eco</span>
+
+    <h2 class="text-headline-md font-headline-md text-coffee-bean mb-6">
+        Origen y Tradición
+    </h2>
+
+    <p class="text-body-md text-on-surface-variant leading-8">
+        Nacidos en las fértiles tierras de Costa Rica, cultivamos más que granos;
+        cultivamos herencia. Cada cereza de café es seleccionada a mano por familias
+        que han dedicado su vida a perfeccionar el arte del café, garantizando un perfil
+        de sabor inigualable que respeta la tierra y honra la tradición.
+    </p>
+</section>
+
+<!-- Productos destacados -->
+<section class="py-16">
+    <h2 class="text-3xl font-bold text-center text-coffee-bean mb-10">
+        Productos Destacados
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+
+        <div class="border rounded-xl p-6 shadow-sm">
+            <h3 class="text-xl font-semibold mb-3">Café Tradicional</h3>
+            <p>
+                Café tostado y molido con un sabor balanceado y aroma característico.
+            </p>
+        </div>
+
+        <div class="border rounded-xl p-6 shadow-sm">
+            <h3 class="text-xl font-semibold mb-3">Café Premium</h3>
+            <p>
+                Selección especial de granos para los amantes del café de alta calidad.
+            </p>
+        </div>
+
+        <div class="border rounded-xl p-6 shadow-sm">
+            <h3 class="text-xl font-semibold mb-3">Café Molido</h3>
+            <p>
+                Ideal para preparar en casa y disfrutar de una experiencia única.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Servicios que ofrece la empresa -->
+<section class="py-16 text-center">
+    <h2 class="text-3xl font-bold text-coffee-bean mb-6">
+        Servicios
+    </h2>
+
+    <div class="max-w-3xl mx-auto">
+        <p class="mb-3">✓ Venta de café en diferentes presentaciones.</p>
+        <p class="mb-3">✓ Atención personalizada a clientes.</p>
+        <p class="mb-3">✓ Pedidos para empresas y negocios.</p>
+        <p>✓ Entrega de pedidos según disponibilidad.</p>
+    </div>
+</section>
+
+<!-- Información de contacto -->
+<section class="py-16 text-center">
+    <h2 class="text-3xl font-bold text-coffee-bean mb-6">
+        Contáctenos
+    </h2>
+
+    <div class="space-y-2">
+        <p><strong>Ubicación:</strong> Zona de Los Santos, Costa Rica.</p>
+        <p><strong>WhatsApp:</strong> +506 8888-8888</p>
+        <p><strong>Correo:</strong> info@ismecafe.com</p>
+    </div>
+</section>

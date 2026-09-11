@@ -1,0 +1,409 @@
+﻿@page
+@model Web.Pages.Usuarios.IndexModel
+@{
+    ViewData["Title"] = "Administrar usuarios";
+    Layout = "_AdminLayout";
+
+    var totales = Model.Usuarios?.Count ?? 0;
+    var activos = Model.Usuarios?.Count(u => u.Activo) ?? 0;
+
+    var inputClass = "w-full bg-earth-cream/30 border border-outline-variant rounded-lg px-4 py-2 text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+}
+
+<div class="flex flex-col gap-4 mb-8 pb-6 border-b border-outline-variant">
+
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+        <div>
+            <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">
+                Gestión de cuentas
+            </p>
+
+            <h1 class="text-headline-lg font-headline-lg text-coffee-bean">
+                Usuarios
+            </h1>
+        </div>
+
+        <div class="flex items-center gap-3 text-body-sm">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 text-center">
+                <div class="text-headline-sm font-headline-sm text-coffee-bean leading-none">
+                    @totales
+                </div>
+                <div class="text-on-surface-variant">
+                    Totales
+                </div>
+            </div>
+
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 text-center">
+                <div class="text-headline-sm font-headline-sm text-status-success leading-none">
+                    @activos
+                </div>
+                <div class="text-on-surface-variant">
+                    Activos
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Mensaje))
+    {
+        <div class="rounded-lg border px-4 py-3 text-body-sm @(Model.EsExito
+                                  ? "border-status-success bg-status-success/10 text-status-success"
+                                  : "border-status-error bg-status-error/10 text-status-error")">
+            @Model.Mensaje
+        </div>
+    }
+
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+    <section class="lg:col-span-2">
+
+        <form id="formUsuario"
+              method="post"
+              asp-page-handler="Guardar"
+              class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm p-6 space-y-5">
+
+            <div class="flex items-center gap-2 pb-3 border-b border-outline-variant">
+
+                <span class="material-symbols-outlined filled text-secondary">
+                    @(Model.EnEdicion ? "manage_accounts" : "person_add")
+                </span>
+
+                <h2 class="text-headline-sm font-headline-sm text-coffee-bean">
+                    @(Model.EnEdicion ? "Editar usuario" : "Nuevo usuario")
+                </h2>
+
+            </div>
+
+            <input type="hidden" asp-for="EditId" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-status-error text-body-sm">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+
+                <div>
+                    <label asp-for="Entrada.Nombre"
+                           class="block text-body-sm font-label-bold text-on-surface mb-1">
+                        Nombre
+                    </label>
+
+                    <input asp-for="Entrada.Nombre"
+                           class="@inputClass" />
+
+                    <span asp-validation-for="Entrada.Nombre"
+                          class="text-status-error">
+                    </span>
+                </div>
+
+                <div>
+                    <label asp-for="Entrada.Apellidos"
+                           class="block text-body-sm font-label-bold text-on-surface mb-1">
+                        Apellidos
+                    </label>
+
+                    <input asp-for="Entrada.Apellidos"
+                           class="@inputClass" />
+                </div>
+
+            </div>
+
+            <div>
+                <label asp-for="Entrada.Correo"
+                       class="block text-body-sm font-label-bold text-on-surface mb-1">
+                    Correo
+                </label>
+
+                <input asp-for="Entrada.Correo"
+                       class="@inputClass" />
+            </div>
+
+            @if (!Model.EnEdicion)
+            {
+                <div>
+                    <label asp-for="Entrada.Contrasena"
+                           class="block text-body-sm font-label-bold text-on-surface mb-1">
+                        Contraseña
+                    </label>
+
+                    <input asp-for="Entrada.Contrasena"
+                           type="password"
+                           class="@inputClass" />
+                </div>
+            }
+
+            <div class="grid grid-cols-2 gap-4">
+
+                <div>
+                    <label asp-for="Entrada.Telefono"
+                           class="block text-body-sm font-label-bold text-on-surface mb-1">
+                        Teléfono
+                    </label>
+
+                    <input asp-for="Entrada.Telefono"
+                           class="@inputClass" />
+                </div>
+
+                <div>
+                    <label asp-for="Entrada.IdRol"
+                           class="block text-body-sm font-label-bold text-on-surface mb-1">
+                        Rol
+                    </label>
+
+                    <select asp-for="Entrada.IdRol"
+                            asp-items="Model.Roles"
+                            class="@inputClass">
+
+                        <option value="">
+                            Seleccione...
+                        </option>
+
+                    </select>
+                </div>
+
+            </div>
+
+            <label class="flex items-center gap-2">
+
+                <input asp-for="Entrada.Activo"
+                       type="checkbox" />
+
+                Cuenta activa
+
+            </label>
+
+            <button type="submit"
+                    class="bg-primary text-on-primary px-5 py-2.5 rounded-full flex items-center gap-2">
+
+                <span class="material-symbols-outlined">
+                    save
+                </span>
+
+                @(Model.EnEdicion ? "Guardar cambios" : "Registrar usuario")
+
+            </button>
+
+        </form>
+
+    </section>
+
+    <section class="lg:col-span-3">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg shadow-sm overflow-hidden">
+
+            <div class="border-b border-outline-variant">
+
+                <div class="flex items-center justify-between px-5 py-4">
+                    <h2 class="text-headline-sm font-headline-sm text-coffee-bean">Directorio</h2>
+                    <span class="bg-surface-container text-on-surface-variant text-label-bold font-label-bold px-3 py-1 rounded-full">@totales</span>
+                </div>
+
+                <div class="px-5 pb-4 flex flex-col md:flex-row md:items-end gap-3">
+
+                    <div class="flex-1">
+                        <label class="block text-body-sm font-label-bold text-on-surface mb-1">
+                            Buscar usuario
+                        </label>
+
+                        <input id="filtroTexto"
+                               type="text"
+                               placeholder="Nombre, correo, teléfono..."
+                               class="@inputClass" />
+                    </div>
+
+                    <div class="md:w-48">
+                        <label class="block text-body-sm font-label-bold text-on-surface mb-1">
+                            Rol
+                        </label>
+
+                        <select id="filtroRol"
+                                class="@inputClass">
+
+                            <option value="">Todos los roles</option>
+
+                            @foreach (var rol in Model.Roles)
+                            {
+                                <option value="@rol.Text">
+                                    @rol.Text
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <div class="md:w-40">
+                        <label class="block text-body-sm font-label-bold text-on-surface mb-1">
+                            Estado
+                        </label>
+
+                        <select id="filtroEstado"
+                                class="@inputClass">
+
+                            <option value="">Todos</option>
+                            <option value="activo">Activos</option>
+                            <option value="inactivo">Inactivos</option>
+
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
+            @if (totales == 0)
+            {
+                <p class="px-5 py-10 text-center text-on-surface-variant text-body-sm">No hay usuarios registrados en el sistema.</p>
+            }
+            else
+            {
+                <div class="overflow-x-auto">
+                    <table class="w-full text-data-table font-data-table">
+                        <thead>
+                            <tr class="text-left text-on-surface-variant bg-surface-container/50 border-b border-outline-variant">
+                                <th class="px-4 py-2.5 font-label-bold">Usuario</th>
+                                <th class="px-4 py-2.5 font-label-bold">Rol</th>
+                                <th class="px-4 py-2.5 font-label-bold">Teléfono</th>
+                                <th class="px-4 py-2.5 font-label-bold text-center">Estado</th>
+                                <th class="px-4 py-2.5 font-label-bold text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaUsuarios">
+                            @foreach (var u in Model.Usuarios)
+                            {
+                                <tr class="filaUsuario border-b border-outline-variant/40 odd:bg-surface-container-lowest even:bg-surface-container-low/40 hover:bg-earth-cream/20"
+                                    data-nombre="@($"{u.Nombre} {u.Apellidos}")"
+                                    data-correo="@u.Correo"
+                                    data-telefono="@u.Telefono"
+                                    data-rol="@u.NombreRol"
+                                    data-estado="@(u.Activo ? "activo" : "inactivo")">
+
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-10 w-10 rounded-full bg-surface-container border border-outline-variant flex items-center justify-center shrink-0 text-primary">
+                                                <span class="material-symbols-outlined">person</span>
+                                            </div>
+                                            <div>
+                                                <div class="font-label-bold text-on-surface leading-tight">@u.Nombre @u.Apellidos</div>
+                                                <div class="text-body-sm text-on-surface-variant">@u.Correo</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="px-4 py-2.5 text-on-surface-variant">
+                                        <span class="bg-surface-container px-2 py-1 rounded-md text-label-sm font-label-bold">@u.NombreRol</span>
+                                    </td>
+
+                                    <td class="px-4 py-2.5 text-on-surface-variant">
+                                        <span class="bg-surface-container px-2 py-1 rounded-md text-label-sm font-label-bold">@u.Telefono</span>
+                                    </td>
+
+                                    <td class="px-4 py-2.5 text-center">
+                                        @if (u.Activo)
+                                        {
+                                            <span class="bg-status-success/10 text-status-success text-label-bold font-label-bold px-2 py-1 rounded-full flex items-center justify-center gap-1 w-fit mx-auto">
+                                                <span class="material-symbols-outlined text-[14px]">check_circle</span> Activa
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="bg-status-error/10 text-status-error text-label-bold font-label-bold px-2 py-1 rounded-full flex items-center justify-center gap-1 w-fit mx-auto">
+                                                <span class="material-symbols-outlined text-[14px]">cancel</span> Inactiva
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td class="px-4 py-2.5">
+                                        <div class="flex items-center justify-end gap-1">
+                                            <a asp-page="/Usuarios/Index" asp-route-id="@u.Id"
+                                               class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-earth-cream transition-colors" aria-label="Editar" title="Editar">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </a>
+
+                                            <form method="post" asp-page-handler="Desactivar" class="inline"
+                                                  onsubmit="return confirm('¿Seguro que deseas cambiar el estado de la cuenta de @u.Nombre?');">
+                                                <input type="hidden" name="id" value="@u.Id" />
+                                                <button type="submit"
+                                                        class="p-2 rounded-full text-on-surface-variant @(u.Activo ? "hover:text-status-error hover:bg-status-error/10" : "hover:text-status-success hover:bg-status-success/10") transition-colors" aria-label="Cambiar Estado" title="Cambiar Estado">
+                                                    <span class="material-symbols-outlined">@(u.Activo ? "block" : "how_to_reg")</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        const texto = document.getElementById("filtroTexto");
+        const rol = document.getElementById("filtroRol");
+        const estado = document.getElementById("filtroEstado");
+
+        const filas = document.querySelectorAll(".filaUsuario");
+
+
+        function filtrarUsuarios() {
+
+            const busqueda = texto.value.toLowerCase();
+            const rolSeleccionado = rol.value.toLowerCase();
+            const estadoSeleccionado = estado.value.toLowerCase();
+
+
+            filas.forEach(fila => {
+
+                const nombre = fila.dataset.nombre.toLowerCase();
+                const correo = fila.dataset.correo.toLowerCase();
+                const telefono = fila.dataset.telefono.toLowerCase();
+                const rolUsuario = fila.dataset.rol.toLowerCase();
+                const estadoUsuario = fila.dataset.estado.toLowerCase();
+
+
+                const coincideTexto =
+                    nombre.includes(busqueda) ||
+                    correo.includes(busqueda) ||
+                    telefono.includes(busqueda);
+
+
+                const coincideRol =
+                    rolSeleccionado === "" ||
+                    rolUsuario === rolSeleccionado;
+
+
+                const coincideEstado =
+                    estadoSeleccionado === "" ||
+                    estadoUsuario === estadoSeleccionado;
+
+
+                if(coincideTexto && coincideRol && coincideEstado)
+                {
+                    fila.style.display = "";
+                }
+                else
+                {
+                    fila.style.display = "none";
+                }
+
+            });
+
+        }
+
+
+        texto.addEventListener("input", filtrarUsuarios);
+        rol.addEventListener("change", filtrarUsuarios);
+        estado.addEventListener("change", filtrarUsuarios);
+
+    </script>
+}

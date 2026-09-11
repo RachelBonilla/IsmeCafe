@@ -1,0 +1,55 @@
+name: Deploy Database to Azure SQL
+
+env:
+  BD_FOLDER: 'IsmeCafe.API/BD'      # Carpeta del proyecto de base de datos
+  BD_PROJECT: 'BD.sqlproj'          # Nombre del archivo .sqlproj
+  BD_DACPAC: 'BD.dacpac'            # Nombre del dacpac generado (igual al AssemblyName)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'IsmeCafe.API/BD/**'        # Debe coincidir con el valor de BD_FOLDER
+      - '.github/workflows/DBDeploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-deploy-${{ github.ref }}
+  cancel-in-progress: false         # Nunca cancelar un despliegue de BD a medias
+
+jobs:
+  build-and-deploy-database:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      # El .sqlproj ya define OutputPath=bin\Release\ para la configuración
+      # Release, así que no se pasa /p:OutputPath (un backslash antes de la
+      # comilla final escapa la comilla y rompe el parseo de MSBuild).
+      - name: Build Database Project
+        run: msbuild "${{ env.BD_PROJECT }}" /p:Configuration=Release /v:minimal
+        working-directory: ${{ env.BD_FOLDER }}
+        shell: cmd
+
+      - name: Verify dacpac was generated
+        run: |
+          if (-not (Test-Path "${{ env.BD_FOLDER }}/bin/Release/${{ env.BD_DACPAC }}")) {
+            Write-Error "No se generó ${{ env.BD_DACPAC }} en ${{ env.BD_FOLDER }}/bin/Release/"
+            exit 1
+          }
+        shell: pwsh
+
+      - name: Deploy to Azure SQL Database
+        uses: azure/sql-action@v2
+        with:
+          connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          path: "${{ env.BD_FOLDER }}/bin/Release/${{ env.BD_DACPAC }}"
+          action: 'publish'
+          arguments: '/p:DropObjectsNotInSource=false /p:BlockOnPossibleDataLoss=true'

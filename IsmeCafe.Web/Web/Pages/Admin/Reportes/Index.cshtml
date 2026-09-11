@@ -1,0 +1,32 @@
+@page
+@model Web.Pages.Admin.Reportes.IndexModel
+@{
+    ViewData["Title"] = "Reportes";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/reportes.css" asp-append-version="true" />
+}
+
+<partial name="_Encabezado" />
+<partial name="_Mensajes" />
+
+@switch (Model.Reporte)
+{
+    case "catalogo":
+        <partial name="_Catalogo" />
+        break;
+
+    case "ventas":
+        <partial name="_Ventas" />
+        break;
+
+    default:
+        <partial name="_Inventario" />
+        break;
+}
+
+@section Scripts {
+    <script src="~/js/reportes.js" asp-append-version="true"></script>
+}

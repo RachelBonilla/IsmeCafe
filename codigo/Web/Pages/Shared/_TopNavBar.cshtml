@@ -1,0 +1,43 @@
+@{
+    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+    string navClass(string page) => string.Equals(currentPage, page, StringComparison.OrdinalIgnoreCase)
+        ? "text-secondary font-bold border-b-2 border-secondary pb-1 hover:text-gold-accent transition-all"
+        : "text-on-surface-variant hover:text-gold-accent transition-colors";
+    var navInicio = navClass("/Index");
+    var navProductos = navClass("/Productos/Index");
+    var navContacto = navClass("/Contacto/Index");
+    var navHistoria = navClass("/Historia/Index");
+}
+
+<!-- TopNavBar -->
+<header class="bg-surface-container-low text-primary w-full border-b border-outline-variant shadow-sm z-50">
+    <div class="flex justify-between items-center px-margin-mobile md:px-gutter py-4 max-w-container-max mx-auto">
+        <a class="text-headline-sm font-headline-sm text-coffee-bean flex items-center gap-2" asp-page="/Index">
+            <span class="material-symbols-outlined filled">local_cafe</span>
+            Isme Café
+        </a>
+        <nav class="hidden md:flex items-center gap-6">
+            <a class="@navInicio" asp-page="/Index">Inicio</a>
+            <a class="@navProductos" asp-page="/Productos/Index">Productos</a>
+            <a class="text-on-surface-variant hover:text-gold-accent transition-colors" asp-page="/Servicios/CatalogoServicios">Servicios</a>
+            <a class="@navHistoria" asp-page="/Historia/Index">Historia</a>
+            <a class="@navContacto" asp-page="/Contacto/Index">Contacto</a>
+        </nav>
+        <div class="flex items-center gap-4">
+            <a asp-page="/Carrito/Index" class="relative p-2 text-on-surface-variant hover:text-primary transition-colors" aria-label="Carrito">
+                <span class="material-symbols-outlined">shopping_cart</span>
+            </a>
+
+            <!-- Autenticación y Registro -->
+
+            <div class="hidden sm:flex items-center gap-3">
+                <a class="text-on-surface-variant hover:text-primary transition-colors text-label-bold font-label-bold"
+                   href="/Login">Iniciar Sesión</a>
+
+                <a class="bg-primary text-on-primary px-4 py-2 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors"
+                   href="#">Registrarse</a>
+            </div>
+
+        </div>
+    </div>
+</header>

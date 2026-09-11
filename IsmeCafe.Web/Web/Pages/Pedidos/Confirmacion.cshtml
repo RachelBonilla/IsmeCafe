@@ -1,0 +1,74 @@
+@page "{id:guid?}"
+@model Web.Pages.Pedidos.ConfirmacionModel
+@{
+    ViewData["Title"] = "Confirmación de pedido";
+}
+
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-gutter py-8">
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="rounded-lg border border-red-300 bg-red-50 text-red-700 px-4 py-3 mb-6">
+            @Model.Error
+        </div>
+    }
+    else if (Model.Pedido != null)
+    {
+        <div class="rounded-lg border border-green-300 bg-green-50 text-green-800 px-6 py-4 mb-6">
+            <div class="text-headline-sm font-bold">¡Pedido confirmado!</div>
+            <div class="mt-1">Tu número de pedido es <span class="font-bold">#@Model.Pedido.NumeroPedido</span>.</div>
+        </div>
+
+        <div class="bg-white border border-outline-variant rounded-lg p-6 mb-6">
+            <h2 class="text-headline-sm font-semibold text-coffee-bean mb-4">Detalles del pedido</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-6">
+                <div><span class="text-on-surface-variant">Cliente:</span> <span class="font-medium">@Model.Pedido.Cliente</span></div>
+                <div><span class="text-on-surface-variant">Fecha:</span> <span class="font-medium">@Model.Pedido.Fecha.ToString("g")</span></div>
+                <div><span class="text-on-surface-variant">Estado:</span> <span class="font-medium">@Model.Pedido.Estado</span></div>
+                <div><span class="text-on-surface-variant">Total:</span> <span class="font-bold text-lg">@Model.Pedido.Total.ToString("C")</span></div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-earth-cream/40 text-coffee-bean">
+                        <tr>
+                            <th class="px-4 py-2">Producto</th>
+                            <th class="px-4 py-2 text-center">Cantidad</th>
+                            <th class="px-4 py-2 text-right">Precio unitario</th>
+                            <th class="px-4 py-2 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var d in Model.Pedido.Detalle)
+                        {
+                            <tr class="border-t border-outline-variant">
+                                <td class="px-4 py-2">@d.Nombre</td>
+                                <td class="px-4 py-2 text-center">@d.Cantidad</td>
+                                <td class="px-4 py-2 text-right">@d.PrecioUnitario.ToString("C")</td>
+                                <td class="px-4 py-2 text-right font-semibold">@d.Subtotal.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <a asp-page="/Productos/Index"
+               class="bg-primary text-on-primary px-5 py-2.5 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors">
+                Seguir comprando
+            </a>
+
+            <a asp-page-handler="Factura" asp-route-id="@Model.Pedido.Id"
+               class="inline-flex items-center gap-2 bg-secondary text-on-secondary px-5 py-2.5 rounded-full text-label-bold font-label-bold hover:bg-secondary/90 transition-colors">
+                <span class="material-symbols-outlined" style="font-size:18px">download</span>
+                Descargar factura (PDF)
+            </a>
+
+            <a asp-page-handler="FacturaVer" asp-route-id="@Model.Pedido.Id" target="_blank"
+               class="inline-flex items-center gap-2 border border-outline-variant text-coffee-bean px-5 py-2.5 rounded-full text-label-bold font-label-bold hover:bg-earth-cream/40 transition-colors">
+                <span class="material-symbols-outlined" style="font-size:18px">print</span>
+                Ver / imprimir factura
+            </a>
+        </div>
+    }
+</div>

@@ -1,0 +1,10 @@
+@model Web.Pages.Productos.IndexModel
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-8 rounded-lg border border-outline-variant bg-surface-container-low text-on-surface-variant px-4 py-3">@Model.Mensaje</div>
+}
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="mb-8 rounded-lg border border-red-300 bg-red-50 text-red-700 px-4 py-3">@Model.Error</div>
+}

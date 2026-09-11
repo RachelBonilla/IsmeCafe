@@ -1,0 +1,42 @@
+@page
+@model Web.Pages.Admin.Productos.IndexModel
+@{
+    ViewData["Title"] = "Administrar productos";
+    Layout = "_AdminLayout";
+    var activos = Model.Productos.Count(p => p.Activo);
+}
+
+<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+    <div>
+        <p class="text-label-bold font-label-bold uppercase tracking-wider text-secondary mb-1">Gestión de catálogo</p>
+        <h1 class="text-headline-lg font-headline-lg text-coffee-bean">Productos</h1>
+    </div>
+
+    <div class="flex items-center gap-3 text-body-sm">
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 text-center">
+            <div class="text-headline-sm font-headline-sm text-coffee-bean leading-none">@Model.Productos.Count</div>
+            <div class="text-on-surface-variant">Totales</div>
+        </div>
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-2 text-center">
+            <div class="text-headline-sm font-headline-sm text-status-success leading-none">@activos</div>
+            <div class="text-on-surface-variant">Activos</div>
+        </div>
+
+        <a asp-page="/Admin/Productos/Nuevo"
+           class="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2.5 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors">
+            <span class="material-symbols-outlined filled">add_circle</span>
+            Nuevo producto
+        </a>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Mensaje))
+{
+    <div class="mb-6 rounded-lg border px-4 py-3 text-body-sm @(Model.EsExito
+        ? "border-status-success bg-status-success/10 text-status-success"
+        : "border-status-error bg-status-error/10 text-status-error")">
+        @Model.Mensaje
+    </div>
+}
+
+<partial name="_ProductoLista" />
