@@ -44,14 +44,17 @@ namespace Web.Pages.Admin.Pedidos
                     IdEstado = idEstado
                 };
 
-                await _pedidoReglas.ActualizarEstado(idPedido,request);
+                await _pedidoReglas.ActualizarEstado(idPedido, request);
 
                 Mensaje = "Estado del pedido actualizado correctamente.";
                 EsExito = true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,"Error al actualizar el estado del pedido {IdPedido}",idPedido);
+                _logger.LogError(
+                    ex,
+                    "Error al actualizar el estado del pedido {IdPedido}",
+                    idPedido);
 
                 Mensaje = "No fue posible actualizar el estado del pedido.";
                 EsExito = false;
@@ -67,16 +70,30 @@ namespace Web.Pages.Admin.Pedidos
             try
             {
                 Pedidos = await _pedidoReglas.ObtenerTodos();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cargar los pedidos");
+
+                Pedidos = new List<PedidoResponse>();
+
+                Mensaje = "No fue posible cargar los pedidos: " + ex.Message;
+                EsExito = false;
+
+                return;
+            }
+
+            try
+            {
                 Estados = await _pedidoReglas.ObtenerEstados();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,"Error al cargar los pedidos");
+                _logger.LogError(ex, "Error al cargar los estados de los pedidos");
 
-                Pedidos = new List<PedidoResponse>();
                 Estados = new List<PedidoEstadoResponse>();
 
-                Mensaje = "No fue posible cargar los pedidos.";
+                Mensaje = "Los pedidos se cargaron correctamente, pero no fue posible cargar los estados: " + ex.Message;
                 EsExito = false;
             }
         }
