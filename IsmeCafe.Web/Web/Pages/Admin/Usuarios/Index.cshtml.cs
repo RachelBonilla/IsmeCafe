@@ -17,7 +17,10 @@ namespace Web.Pages.Usuarios
         private readonly IRolReglas _rolReglas;
         private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(IUsuarioReglas usuarioReglas, IRolReglas rolReglas, ILogger<IndexModel> logger)
+        public IndexModel(
+            IUsuarioReglas usuarioReglas,
+            IRolReglas rolReglas,
+            ILogger<IndexModel> logger)
         {
             _usuarioReglas = usuarioReglas;
             _rolReglas = rolReglas;
@@ -35,7 +38,9 @@ namespace Web.Pages.Usuarios
         public List<SelectListItem> Roles { get; set; } = new();
 
         public string? Mensaje { get; private set; }
+
         public bool EsExito { get; private set; }
+
         public bool EnEdicion => EditId.HasValue;
 
         public async Task OnGetAsync(Guid? id)
@@ -44,23 +49,35 @@ namespace Web.Pages.Usuarios
 
             if (id.HasValue)
             {
-                var usuario = await _usuarioReglas.Obtener(id.Value);
-                if (usuario != null)
+                try
                 {
-                    EditId = usuario.Id;
-                    Entrada = new UsuarioRequest
+                    var usuario = await _usuarioReglas.Obtener(id.Value);
+
+                    if (usuario != null)
                     {
-                        Nombre = usuario.Nombre,
-                        Apellidos = usuario.Apellidos,
-                        Correo = usuario.Correo,
-                        Telefono = usuario.Telefono,
-                        Activo = usuario.Activo,
-                        IdRol = MapRol(usuario.NombreRol)
-                    };
+                        EditId = usuario.Id;
+
+                        Entrada = new UsuarioRequest
+                        {
+                            Nombre = usuario.Nombre,
+                            Apellidos = usuario.Apellidos,
+                            Correo = usuario.Correo,
+                            Telefono = usuario.Telefono,
+                            Activo = usuario.Activo,
+                            IdRol = MapRol(usuario.NombreRol)
+                        };
+                    }
+                    else
+                    {
+                        Mensaje = "No se encontró la cuenta solicitada.";
+                        EsExito = false;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Mensaje = "No se encontró la cuenta solicitada.";
+                    _logger.LogError(ex, "Error al obtener el usuario para edición");
+
+                    Mensaje = "No fue posible cargar la información del usuario.";
                     EsExito = false;
                 }
             }
@@ -75,7 +92,7 @@ namespace Web.Pages.Usuarios
 
             if (!ModelState.IsValid)
             {
-                await CargarDatosBaseAsync(); 
+                await CargarDatosBaseAsync();
                 return Page();
             }
 
@@ -96,7 +113,10 @@ namespace Web.Pages.Usuarios
                         Activo = Entrada.Activo
                     };
 
-                    ok = await _usuarioReglas.Editar(EditId.Value, editarRequest);
+                    ok = await _usuarioReglas.Editar(
+                        EditId.Value,
+                        editarRequest);
+
                     accion = "actualizado";
                 }
                 else
@@ -108,9 +128,16 @@ namespace Web.Pages.Usuarios
                 if (ok)
                 {
                     Mensaje = $"El usuario \"{Entrada.Nombre}\" ha sido {accion} correctamente.";
+
                     EsExito = true;
+
                     ModelState.Clear();
-                    Entrada = new UsuarioRequest { Activo = true };
+
+                    Entrada = new UsuarioRequest
+                    {
+                        Activo = true
+                    };
+
                     EditId = null;
                 }
                 else
@@ -122,11 +149,13 @@ namespace Web.Pages.Usuarios
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al guardar el usuario");
+
                 Mensaje = "No fue posible completar la operación. Verifica la conexión con el servidor.";
                 EsExito = false;
             }
 
             await CargarDatosBaseAsync();
+
             return Page();
         }
 
@@ -135,19 +164,23 @@ namespace Web.Pages.Usuarios
             try
             {
                 var ok = await _usuarioReglas.Desactivar(id);
+
                 Mensaje = ok
                     ? "El estado de la cuenta fue actualizado."
                     : "No fue posible actualizar el estado de la cuenta.";
+
                 EsExito = ok;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al cambiar el estado del usuario");
+
                 Mensaje = "No fue posible actualizar el estado. Verifica la conexión con el API.";
                 EsExito = false;
             }
 
             await CargarDatosBaseAsync();
+
             return Page();
         }
 
@@ -156,32 +189,59 @@ namespace Web.Pages.Usuarios
             try
             {
                 var listaUsuarios = await _usuarioReglas.Obtener();
-                Usuarios = listaUsuarios.OrderBy(u => u.Nombre).ToList();
 
-                var listaRoles = await _rolReglas.Obtener();
-                Roles = listaRoles.Select(r => new SelectListItem
-                {
-                    Text = r.Nombre,
-                    Value = r.Id.ToString()
-                }).OrderBy(r => r.Text).ToList();
+                Usuarios = listaUsuarios
+                    .OrderBy(u => u.Nombre)
+                    .ToList();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al obtener datos base (usuarios o roles)");
-                if (string.IsNullOrEmpty(Mensaje))
-                {
-                    Mensaje = "No fue posible cargar toda la información del directorio. Verifica la conexión con el API.";
-                    EsExito = false;
-                }
+                _logger.LogError(ex, "Error al obtener usuarios");
+
+                Mensaje = "Error al cargar usuarios: " + ex.Message;
+                EsExito = false;
+
+                return;
+            }
+
+            try
+            {
+                var listaRoles = await _rolReglas.Obtener();
+
+                Roles = listaRoles
+                    .Select(r => new SelectListItem
+                    {
+                        Text = r.Nombre,
+                        Value = r.Id.ToString()
+                    })
+                    .OrderBy(r => r.Text)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener roles");
+
+                Mensaje = "Usuarios cargados, pero ocurrió un error al cargar los roles: " + ex.Message;
+                EsExito = false;
             }
         }
 
         private Guid MapRol(string nombreRol)
         {
-            if (string.IsNullOrWhiteSpace(nombreRol)) return Guid.Empty;
+            if (string.IsNullOrWhiteSpace(nombreRol))
+            {
+                return Guid.Empty;
+            }
 
-            var item = Roles.FirstOrDefault(r => r.Text.Equals(nombreRol, StringComparison.OrdinalIgnoreCase));
-            return item != null && Guid.TryParse(item.Value, out var id) ? id : Guid.Empty;
+            var item = Roles.FirstOrDefault(
+                r => r.Text.Equals(
+                    nombreRol,
+                    StringComparison.OrdinalIgnoreCase));
+
+            return item != null &&
+                   Guid.TryParse(item.Value, out var id)
+                ? id
+                : Guid.Empty;
         }
     }
 }
