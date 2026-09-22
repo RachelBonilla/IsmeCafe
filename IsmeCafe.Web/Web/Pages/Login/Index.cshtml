@@ -34,9 +34,16 @@
                 <label asp-for="Input.Contrasena" class="block text-sm font-medium text-coffee-bean mb-2">
                     Contraseña
                 </label>
-                <input asp-for="Input.Contrasena" type="password" required
+                <input asp-for="Input.Contrasena"
+                       type="password"
+                       required
+                       minlength="8"
+                       autocomplete="current-password"
                        placeholder="••••••••"
                        class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-primary" />
+                <p class="text-xs text-on-surface-variant mt-2">
+                    Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo.
+                </p>
                 <span asp-validation-for="Input.Contrasena" class="text-red-500 text-xs mt-1"></span>
             </div>
 
