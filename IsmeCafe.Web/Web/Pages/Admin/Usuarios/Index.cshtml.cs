@@ -121,7 +121,8 @@ namespace Web.Pages.Usuarios
                 }
                 else
                 {
-                    ok = await _usuarioReglas.Agregar(Entrada);
+					//registra un nuevo usuario con los datos y el rol seleccionados.
+					ok = await _usuarioReglas.Agregar(Entrada);
                     accion = "registrado";
                 }
 
