@@ -55,11 +55,11 @@
 
                     <vc:puntos-usuario />
 
-                   <form method="post" asp-page="/Login/LogOut">
-                        <button type="submit" class="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-full text-label-bold font-label-bold hover:bg-primary/90 transition-colors">
-                            <span class="material-symbols-outlined text-[20px]">
-                                logout
-                            </span>
+                    <form method="post" asp-page="/Login/LogOut" onsubmit="return confirm('¿Deseas cerrar tu sesión?');">
+                        <button type="button"
+                                onclick="abrirModalCerrarSesion()"
+                                class="inline-flex items-center gap-2 border border-red-400 text-red-500 px-4 py-2 rounded-full text-label-bold font-label-bold hover:bg-red-500/10 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">logout</span>
                             Cerrar Sesión
                         </button>
                     </form>
